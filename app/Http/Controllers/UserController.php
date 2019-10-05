@@ -1,0 +1,140 @@
+<?php
+
+namespace App\Http\Controllers;
+
+use App\RadioStation;
+use App\User;
+use Illuminate\Http\Request;
+use Illuminate\Http\Response;
+use Illuminate\Support\Facades\Hash;
+
+class UserController extends Controller
+{
+    public function __construct()
+    {
+        $this->middleware('auth');
+    }
+
+    /**
+     * Display a listing of the resources
+     * @return Response
+     */
+    public function index()
+    {
+        $radio_stations = RadioStation::all();
+
+//        return $radio_stations;
+        return view('users.users',compact('radio_stations'));
+    }
+
+    /**
+     * Show the form for creating a new resource.
+     *
+     * @return \Illuminate\Http\Response
+     */
+    public function create()
+    {
+        //
+    }
+
+    /**
+     * Store a newly created resource in storage.
+     *
+     * @param  \Illuminate\Http\Request  $request
+     * @return \Illuminate\Http\Response
+     */
+    public function store(Request $request)
+    {
+        $user = new User();
+        $user->radio_station_id = $request->input('radio_station_id');
+        $user->name = $request->input('name');
+        $user->username = $request->input('username');
+        $user->email = $request->input('email');
+        $user->phone_number = $request->input('phone_number');
+        $user->password = Hash::make('11111111');
+        $user->role= $request->input('role');
+
+        $user->save();
+
+        toastr()->success('User Added');
+
+        return back();
+    }
+
+    public function all_users(){
+        $users = User::with('radio_station')->get();
+
+
+//        return $users[1]->radio_station;
+        $radio_stations = RadioStation::all();
+        return view('users.users',compact('users','radio_stations'));
+    }
+
+    /**
+     * Display the specified resource.
+     *
+     * @param  int  $id
+     * @return \Illuminate\Http\Response
+     */
+    public function show($id)
+    {
+        //
+    }
+
+    /**
+     * Show the form for editing the specified resource.
+     *
+     * @param  int  $id
+     * @return \Illuminate\Http\Response
+     */
+    public function edit($id)
+    {
+        //
+    }
+
+    /**
+     * Update the specified resource in storage.
+     *
+     * @param  \Illuminate\Http\Request  $request
+     * @param  int  $id
+     * @return \Illuminate\Http\Response
+     */
+    public function update(Request $request, $id)
+    {
+        $user =User::find($id);
+        $user->radio_station_id = $request->input('radio_station_id');
+        $user->name = $request->input('name');
+        $user->email = $request->input('email');
+        $user->phone_number = $request->input('phone_number');
+        $user->role= $request->input('role');
+
+        $user->save();
+
+        toastr()->success('User Info Updated');
+
+        return back();
+    }
+
+    public function delete_users(Request $request){
+
+        $selected_id = explode(',',$request->input('selected_ids'));;
+        foreach ($selected_id as $value){
+            $level = User::find($value);
+            $level->delete();
+        }
+
+        toastr()->success(count($selected_id).' Users Deleted');
+        return back();
+    }
+
+    /**
+     * Remove the specified resource from storage.
+     *
+     * @param  int  $id
+     * @return \Illuminate\Http\Response
+     */
+    public function destroy($id)
+    {
+        //
+    }
+}
