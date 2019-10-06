@@ -12,4 +12,8 @@ class Advert extends Model
     public function agency(){
         return $this->belongsTo('App\Agency');
     }
+
+    protected $fillable = [
+        'agency_id','radio_station_id','advert_number','name','audio_file','user_id'
+    ];
 }

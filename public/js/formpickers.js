@@ -19,8 +19,11 @@
     }*/
 
 
-    $('#datetimepicker6').datetimepicker();
+    $('#datetimepicker6').datetimepicker({
+        format:'L'
+    });
     $('#datetimepicker7').datetimepicker({
+        format:'L',
         useCurrent: false
     });
     $("#datetimepicker6").on("change.datetimepicker", function (e) {

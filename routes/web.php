@@ -68,3 +68,13 @@ Route::get('delete-users', 'UserController@delete_users')->name('delete-users');
 Route::resource('adverts', 'AdvertController');
 Route::get('all-adverts', 'AdvertController@all_adverts')->name('all-adverts');
 Route::get('delete-adverts', 'AdvertController@delete_advert')->name('delete-advert');
+
+
+/*
+ * Orders
+ */
+Route::resource('orders', 'OrderController');
+Route::get('all-orders', 'OrderController@all_orders')->name('all-orders');
+Route::get('delete-orders', 'OrderController@delete_orders')->name('delete-orders');
+Route::get('filter-adverts', 'OrderController@filterAdverts')->name('filter-adverts');
+Route::get('filter-agencies', 'OrderController@filterAgencies')->name('filter-agencies');

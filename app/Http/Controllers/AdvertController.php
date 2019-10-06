@@ -7,6 +7,8 @@ use App\Agency;
 use App\RadioStation;
 use Illuminate\Http\Request;
 use Illuminate\Http\Response;
+use Illuminate\Support\Facades\Auth;
+use Illuminate\Support\Facades\DB;
 
 class AdvertController extends Controller
 {
@@ -57,7 +59,9 @@ class AdvertController extends Controller
      */
     public function store(Request $request)
     {
-        $advert = new Advert();
+        DB::beginTransaction();
+        try{
+            $advert = new Advert();
         $file = $request->file('audio_file');
         $fileName = $file->getClientOriginalName();
         $file->move(public_path('audio_files'), $fileName);
@@ -66,12 +70,15 @@ class AdvertController extends Controller
 
         $countAdverts = Advert::where('radio_station_id',$request->input('radio_station_id'))->get()->count();
 
+
         if ($countAdverts == 0){
             $advert_number=  $radio_station->ad_prefix."-".substr(date('Ym-'),'2').'001';
         }else {
-            $record = Advert::latest('id')->first();
+
+
+            $record = Advert::latest('advert_number')->where('radio_station_id',$request->input('radio_station_id'))->first();
             $expNum = $record->advert_number;
-//            return $expNum;
+//            return $record;
             if ($expNum == '') {
                 $advert_number = $radio_station->ad_prefix."-". substr(date('Ym'), '2') . '01';
             } else {
@@ -84,7 +91,7 @@ class AdvertController extends Controller
 
                     $advert_number = $radio_station->ad_prefix."-".substr(($add_num),0,2).date('m')."-".substr(($add_num),4);
 
-                   // return $advert_number;
+                    // return $advert_number;
 
                 } else {
                     $advert_number = $radio_station->ad_prefix."-".substr(date('Ym-'),'2').'001';
@@ -99,9 +106,15 @@ class AdvertController extends Controller
         $advert->advert_number = $advert_number;
         $advert->name = $request->input('name');
         $advert->audio_file = $fileName;
+        $advert->user_id =Auth::user()->id;
         $advert->save();
 
+        DB::commit();
         toastr()->success('Advert Added');
+        }catch(\Exception $exception){
+            DB::rollBack();
+            toastr()->warning('Something Went Wrong Please Try again');
+        }
         return redirect()->route('adverts.index');
     }
 

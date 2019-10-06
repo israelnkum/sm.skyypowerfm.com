@@ -3,8 +3,8 @@
 namespace App\Http\Controllers;
 
 use App\RadioStation;
-use foo\bar;
 use Illuminate\Http\Request;
+use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\DB;
 
 class RadioStationController extends Controller
@@ -46,12 +46,12 @@ class RadioStationController extends Controller
         DB::beginTransaction();
         try{
             $station = new RadioStation();
-
             $station->name = $request->input('name');
             $station->address = $request->input('address');
             $station->location = $request->input('location');
             $station->phone_number = $request->input('phone_number');
             $station->fax = $request->input('fax');
+            $station->user_id = Auth::user()->id;
 
             //upload signature
             $signature = request()->file('signature');
@@ -173,9 +173,8 @@ class RadioStationController extends Controller
                 $file->move('public/uploads', $logoName);
                 $station->logo = $logoName;
             }
+
             $station->ad_prefix = strtoupper($request->input('prefix'));
-
-
 
             $station->save();
             DB::commit();

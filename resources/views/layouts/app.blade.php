@@ -10,6 +10,8 @@
 
     <title>{{ config('app.name', 'AMALITECH - Schedule Master') }}</title>
     <!-- base:css -->
+    <!-- endinject -->
+
     <link rel="stylesheet" href="{{asset('public/css/materialdesignicons.min.css')}}">
     <link rel="stylesheet" href="{{asset('public/css/vendor.bundle.base.css')}}">
     <link rel="stylesheet" href="{{asset('public/css/font-awesome.min.css')}}">
@@ -23,12 +25,11 @@
     <!-- inject:css -->
     <link rel="stylesheet" href="{{asset('public/css/summernote-bs4.css')}}">
     <link rel="stylesheet" href="{{asset('public/css/select2.min.css')}}">
-    <link rel="stylesheet" href="{{asset('public/css/style.css')}}">
 
-    <!-- endinject -->
+
     <link rel="stylesheet" href="{{asset('public/css/bootstrap-datepicker.min.css')}}">
     <link rel="stylesheet" href="{{asset('public/css/tempusdominus-bootstrap-4.min.css')}}">
-
+    <link rel="stylesheet" href="{{asset('public/css/style.css')}}">
     <link rel="stylesheet" href="{{asset('public/css/toastr.min.css')}}">
     <link rel="stylesheet" href="{{asset('public/css/dataTables.bootstrap4.css')}}">
     <link rel="shortcut icon" href="{{asset('public/favicon.ico')}}" />
@@ -92,7 +93,7 @@
                             </a>
                         </li>
                         <li class="nav-item">
-                            <a class="nav-link" href="{{route('agency.index')}}">
+                            <a class="nav-link" href="{{route('orders.index')}}">
                                 <i class="mdi mdi-book-open menu-icon"></i>
                                 <span class="menu-title">Orders</span>
                             </a>
@@ -163,6 +164,7 @@
 <script src="{{asset('public/js/vendor.bundle.base.js')}}"></script>
 <!-- endinject -->
 <!-- inject:js -->
+{{-- <script src="https://code.jquery.com/jquery-3.3.1.js"></script> --}}
 <script src="{{asset('public/js/off-canvas.js')}}"></script>
 <script src="{{asset('public/js/hoverable-collapse.js')}}"></script>
 <script src="{{asset('public/js/template.js')}}"></script>
@@ -179,11 +181,11 @@
 <script src="{{asset('public/js/tempusdominus-bootstrap-4.js')}}"></script>
 <script src="{{asset('public/js/bootstrap-datepicker.min.js')}}"></script>
 <!-- plugin js for this page -->
-<script src="{{asset('public/js/jquery.dataTables.js')}}"></script>
+<script src="{{asset('public/js/jquery.dataTables.min.js')}}"></script>
 <script src="{{asset('public/js/dataTables.bootstrap4.js')}}"></script>
 <!-- End plugin js for this page -->
 <!-- Custom js for this page-->
-{{--<script src="http://www.urbanui.com/hiliteui/template/js/data-table.js"></script>--}}
+{{-- <script src="http://www.urbanui.com/hiliteui/template/js/data-table.js"></script> --}}
 <script src="{{asset('public/js/dataTables.select.min.js')}}"></script>
 <!-- Custom js for this page-->
 <script src="{{asset('public/js/jquery.repeater.min.js')}}"></script>

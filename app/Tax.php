@@ -8,6 +8,6 @@ class Tax extends Model
 {
     protected $table = "taxes";
     protected $fillable = [
-        'name','value',
+        'name','value','user_id'
     ];
 }

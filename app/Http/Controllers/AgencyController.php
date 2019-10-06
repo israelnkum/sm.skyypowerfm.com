@@ -6,6 +6,8 @@ use App\Agency;
 use App\RadioStation;
 use Illuminate\Http\Request;
 use Illuminate\Http\Response;
+use Illuminate\Support\Facades\Auth;
+use Illuminate\Support\Facades\DB;
 
 class AgencyController extends Controller
 {
@@ -61,19 +63,39 @@ class AgencyController extends Controller
      */
     public function store(Request $request)
     {
-        $agency = new Agency();
-        $agency->agency_name = $request->input('agency_name');
-        $agency->radio_station_id = $request->input('radio_station_id');
-        $agency->address = $request->input('address');
-        $agency->fax = $request->input('fax');
-        $agency->email = $request->input('email');
-        $agency->phone_number = $request->input('phone_number');
-        $agency->discount = $request->input('discount');
-        $agency->contact_person = $request->input('contact_person');
-
-        $agency->save();
-
+        DB::beginTransaction();
+        try{
+            $new_tax = Agency::updateOrCreate(
+                ['agency_name' => $request->input('agency_name')],
+                [
+                    'radio_station_id' => $request->input('radio_station_id'),
+                    'address' => $request->input('address'),
+                    'fax' => $request->input('fax'),
+                    'email' => $request->input('email'),
+                    'phone_number' => $request->input('phone_number'),
+                    'discount' => $request->input('discount'),
+                    'contact_person' => $request->input('contact_person'),
+                    'user_id'=>Auth::user()->id,
+                ]
+            );
+            /*$agency = new Agency();
+            $agency->agency_name = $request->input('agency_name');
+            $agency->radio_station_id = $request->input('radio_station_id');
+            $agency->address = $request->input('address');
+            $agency->fax = $request->input('fax');
+            $agency->email = $request->input('email');
+            $agency->phone_number = $request->input('phone_number');
+            $agency->discount = $request->input('discount');
+            $agency->contact_person = $request->input('contact_person');
+            $agency->save();*/
+            DB::commit();
         toastr()->success('Agency Added');
+        }catch(\Exception $exception){
+            DB::rollBack();
+
+            return $exception;
+            toastr()->warning('Something Went wrong! Please Try again');
+        }
         return back();
     }
 

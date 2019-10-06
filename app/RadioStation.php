@@ -13,4 +13,8 @@ class RadioStation extends Model
     public function agency(){
         return $this->hasMany('App\Agency');
     }
+
+    protected $fillable = [
+        'name','address','location','phone_number','fax','ad_prefix','signature','logo','user_id'
+    ];
 }

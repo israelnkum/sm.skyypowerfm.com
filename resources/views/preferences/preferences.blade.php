@@ -160,20 +160,20 @@
                                     </div>
                                     <div class="tab-pane fade" id="tax" role="tabpanel" aria-labelledby="profile-tab">
                                         <div class="row">
-                                            <div class="col-md-4">
+                                            <div class="col-md-6">
                                                 <form class="repeater needs-validation" novalidate method="post" action="{{route('taxes.store')}}">
                                                     @csrf
                                                     <div data-repeater-list="taxes">
                                                         <div data-repeater-item class="d-flex mb-2">
                                                             <div class="form-group row">
-                                                                <div class="col-md-12">
+                                                                <div class="col-md-4">
                                                                     <label for="name">Name</label>
                                                                     <input type="text" required class="form-control" id="name" name="tax_name">
                                                                     <div class="invalid-feedback">
                                                                         Name is required
                                                                     </div>
                                                                 </div>
-                                                                <div class="col-md-12">
+                                                                <div class="col-md-3">
                                                                     <label  for="percentage">Value</label>
                                                                     <div class="input-group">
                                                                         <input required type="number" step="0.01" name="tax_value" class="form-control vat" id="percentage" min="0">
@@ -202,7 +202,7 @@
                                                 </form>
                                                 {{--                                                <p id="demo">d</p>--}}
                                             </div>
-                                            <div class="col-md-8 grid-margin">
+                                            <div class="col-md-6 grid-margin">
                                                 <div class="card">
                                                     <div class="card-body">
                                                         <form id="delete-tax-form">
@@ -245,7 +245,7 @@
                                                                             <td>{{$tax->name}}</td>
                                                                             <td>{{$tax->value}}</td>
                                                                             <td>
-                                                                                <a href="#"  class="mr-1 edit-tax text-muted p-2"><i class="mdi mdi-grease-pencil"></i></a>
+                                                                                <a href="javascript:void(0)"  class="mr-1 edit-tax text-muted p-2"><i class="mdi mdi-grease-pencil"></i></a>
                                                                             </td>
                                                                         </tr>
                                                                         @php($i+=1)
@@ -370,7 +370,7 @@
                             </div>
                             <div class="col-md-6">
                                 <label for="edit-radio-prefix" class="text-primary">Advert Prefix</label>
-                                <input required type="text" minlength="1" maxlength="3" placeholder="eg: SKP" class="form-control p-2" id="edit-radio-prefix" name="prefix">
+                                <input required type="text" minlength="3" maxlength="3" placeholder="eg: SKP" class="form-control p-2" id="edit-radio-prefix" name="prefix">
                                 <div class="invalid-feedback">
                                     Prefix required
                                 </div>
@@ -444,7 +444,7 @@
                             </div>
                             <div class="col-md-6">
                                 <label for="edit-radio-prefix" class="text-primary">Advert Prefix</label>
-                                <input required type="text" minlength="1" maxlength="3" placeholder="eg: SKP" class="form-control p-2" id="radio-prefix" name="prefix">
+                                <input required type="text" minlength="3" maxlength="3" placeholder="eg: SKP" class="form-control p-2" id="radio-prefix" name="prefix">
                                 <div class="invalid-feedback">
                                     Prefix required
                                 </div>

@@ -1,9 +1,112 @@
 $(document).ready(function () {
+   
+    /**
+     * Filter Adverts
+     */
+    $('#agency-order').change(function () {
+        $.ajax({
+            type: 'get',
+            url: "filter-adverts",
+            data: {
+                id: $('#agency-order').val()
+            },
+            success: function (data) {
+                data = $.parseJSON(data);
+                console.log(data);
+                $('#adverts-order').empty();
+                $('#adverts-order').append($('<option>', {
+                    value: '',
+                    text : ''
+                }));
+                for(let count =0; count<data.length; count++){
+                    $('#adverts-order').append($('<option>', {
+                        value: data[count].id,
+                        text : data[count].name
+                    }));
+                }
+                /*  let html ='';
+                  for(let count =0; count<data.length; count++){
+
+                  }*/
+                // $( ".last-visit-body"+i ).html(html);
+
+            },
+            error:function (error) {
+                console.log(error);
+            }
+        });
+    });
+
+
+    /**
+     * Filter Agency
+     */
+    $('#select-radio-station').change(function () {
+        $.ajax({
+            type: 'get',
+            url: "filter-agencies",
+            data: {
+                id: $('#select-radio-station').val()
+            },
+            success: function (data) {
+                data = $.parseJSON(data);
+                console.log(data);
+                $('#agency-order').empty();
+                $('#agency-order').append($('<option>', {
+                    value: '',
+                    text : ''
+                }));
+                for(let count =0; count<data.length; count++){
+                    $('#agency-order').append($('<option>', {
+                        value: data[count].id,
+                        text : data[count].agency_name
+                    }));
+                }
+            },
+            error:function (error) {
+                console.log(error);
+            }
+        });
+    });
+
+
+    /**
+     * Filter Agency for Advertisment
+     */
+    $('#station-advert').change(function () {
+        $.ajax({
+            type: 'get',
+            url: "filter-agencies",
+            data: {
+                id: $('#station-advert').val(),
+            },
+            success: function (data) {
+                data = $.parseJSON(data);
+                console.log(data);
+                $('#agencies_id-advert').empty();
+                $('#agencies_id-advert').append($('<option>', {
+                    value: '',
+                    text : ''
+                }));
+                for(let count =0; count<data.length; count++){
+                    $('#agencies_id-advert').append($('<option>', {
+                        value: data[count].id,
+                        text : data[count].agency_name
+                    }));
+                }
+            },
+            error:function (error) {
+                console.log(error);
+            }
+        });
+    });
+
+
     /*
     Taxes
      */
     let ids =[];
-        // document.getElementById("demo").innerHTML = ids;
+    // document.getElementById("demo").innerHTML = ids;
     let table = $('#taxes-table').DataTable( {
         columnDefs: [ {
             orderable: false,
@@ -179,8 +282,6 @@ $(document).ready(function () {
         $('#edit-radio-prefix').val(data[7]);
 
 
-
-
         $('#edit-radio-station-form').attr('action', 'radio-stations/'+data[1]);
         $('#edit-radio-station-modal').modal('show');
         $('#radio-title').text(data[2]);
@@ -350,5 +451,6 @@ $(document).ready(function () {
 
         }
     } );
+
 
 });
