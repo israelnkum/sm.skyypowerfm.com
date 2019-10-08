@@ -24,8 +24,8 @@ Route::get('/home', 'HomeController@index')->name('home');
 /*
  * Commercials
  */
-Route::resource('commercials', 'AdvertController');
-Route::get('all-commercials', 'AdvertController@all_commercials')->name('all-commercials');
+Route::resource('commercials', 'CommercialController');
+Route::get('all-commercials', 'CommercialController@all_commercials')->name('all-commercials');
 
 
 /*
@@ -70,7 +70,7 @@ Route::get('all-adverts', 'AdvertController@all_adverts')->name('all-adverts');
 Route::get('delete-adverts', 'AdvertController@delete_advert')->name('delete-advert');
 
 
-/*
+/**
  * Orders
  */
 Route::resource('orders', 'OrderController');
@@ -78,3 +78,12 @@ Route::get('all-orders', 'OrderController@all_orders')->name('all-orders');
 Route::get('delete-orders', 'OrderController@delete_orders')->name('delete-orders');
 Route::get('filter-adverts', 'OrderController@filterAdverts')->name('filter-adverts');
 Route::get('filter-agencies', 'OrderController@filterAgencies')->name('filter-agencies');
+
+
+/**
+ * Programs
+ */
+Route::resource('programs', 'ProgramController');
+Route::get('all-programs', 'ProgramController@allPrograms')->name('all-programs');
+Route::post('delete-programs', 'ProgramController@deletePrograms')->name('delete-programs');
+Route::post('upload-programs', 'ProgramController@uploadPrograms')->name('upload-programs');

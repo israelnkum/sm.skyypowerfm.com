@@ -15,7 +15,7 @@
     <link rel="stylesheet" href="{{asset('public/css/materialdesignicons.min.css')}}">
     <link rel="stylesheet" href="{{asset('public/css/vendor.bundle.base.css')}}">
     <link rel="stylesheet" href="{{asset('public/css/font-awesome.min.css')}}">
-
+    <link rel="stylesheet" href="{{asset('public/css/dragula.min.css')}}">
     <link rel="stylesheet" href="{{asset('public/css/jquery.toast.min.css')}}">
 {{--    <link rel="stylesheet" href="https://cdn.datatables.net/1.10.19/css/jquery.dataTables.min.css">--}}
     <link rel="stylesheet" href="{{asset('public/css/select.dataTables.min.css')}}">
@@ -87,7 +87,7 @@
                             </a>
                         </li>
                         <li class="nav-item">
-                            <a class="nav-link" href="{{route('agency.index')}}">
+                            <a class="nav-link" href="{{route('commercials.index')}}">
                                 <i class="mdi mdi-playlist-music menu-icon"></i>
                                 <span class="menu-title">Commercial</span>
                             </a>
@@ -111,7 +111,7 @@
                             </a>
                         </li>
                         <li class="nav-item">
-                            <a class="nav-link" href="{{route('agency.index')}}">
+                            <a class="nav-link" href="{{route('programs.index')}}">
                                 <i class="mdi mdi-playlist-edit menu-icon"></i>
                                 <span class="menu-title">Programs</span>
                             </a>
@@ -196,7 +196,13 @@
 <script src="{{asset('public/js/select2.js')}}"></script>
 <script src="{{asset('public/js/jquery.inputmask.bundle.js')}}"></script>
 <script src="{{asset('public/js/inputmask.binding.js')}}"></script>
+@if(!\Request::is('orders') && !\Request::is('programs') && !\Request::is('all-programs'))
 <script src="{{asset('public/js/mask.init.js')}}"></script>
+@endif
+<script src="{{asset('public/js/dragula.min.js')}}"></script>
+<!-- End plugin js for this page -->
+<!-- Custom js for this page-->
+<script src="{{asset('public/js/dragula.js')}}"></script>
 <script src="{{asset('public/js/custom.js')}}"></script>
 <script src="{{asset('public/js/summernote-bs4.min.js')}}" referrerpolicy="origin"></script>
 <script>

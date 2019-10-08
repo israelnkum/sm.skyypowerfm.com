@@ -112,7 +112,7 @@
                                                         <label for="radio-station">Discount</label>
                                                         <input type="number" class="form-control" name="discount" id="discount" step="any" value="0" min="0">
                                                         <div class="invalid-feedback">
-                                                            Radio Station is required
+                                                            Discount is required
                                                         </div>
                                                     </div>
                                                 </div>

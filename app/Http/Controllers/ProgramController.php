@@ -2,10 +2,21 @@
 
 namespace App\Http\Controllers;
 
+use App\Imports\ProgramsImport;
+use App\Program;
+use App\RadioStation;
 use Illuminate\Http\Request;
+use Illuminate\Support\Carbon;
+use Illuminate\Support\Facades\Auth;
+use Illuminate\Support\Facades\DB;
+use Maatwebsite\Excel\Facades\Excel;
 
 class ProgramController extends Controller
 {
+    public function __construct()
+    {
+        $this->middleware('auth');
+    }
     /**
      * Display a listing of the resource.
      *
@@ -13,7 +24,8 @@ class ProgramController extends Controller
      */
     public function index()
     {
-        //
+        $radio_stations = RadioStation::all();
+        return view('programs.programs',compact('radio_stations'));
     }
 
     /**
@@ -26,6 +38,22 @@ class ProgramController extends Controller
         //
     }
 
+    public function allPrograms(){
+        $radio_stations = RadioStation::all();
+        $programs = Program::with('radio_station')->get();
+        return view('programs.programs',compact('radio_stations','programs'));
+    }
+    public function deletePrograms(Request $request){
+
+        $selected_id = explode(',',$request->input('selected_programs'));;
+        foreach ($selected_id as $value){
+            $level = Program::find($value);
+            $level->delete();
+        }
+
+        toastr()->success(count($selected_id).' Program(s) Deleted');
+        return back();
+    }
     /**
      * Store a newly created resource in storage.
      *
@@ -34,9 +62,71 @@ class ProgramController extends Controller
      */
     public function store(Request $request)
     {
-        //
+        DB::beginTransaction();
+        try {
+            foreach ($request->input('day_of_week') as $day){
+                $program = new Program();
+                $program->program_name = strtoupper($request->input('program_name'));
+                $program->radio_station_id = $request->input('radio_station_id');
+                $program->day = $day;
+                $program->start_time = $request->input('start_time');
+                $program->end_time = $request->input('end_time');
+
+                //calculate duration in HOurs
+                $start_time = Carbon::parse($request->input('start_time'));
+                $end_time = Carbon::parse($request->input('end_time'));
+                //end calculation
+
+                $duration = round($end_time->diffInMinutes($start_time) / 60);
+                $program->duration = $duration;
+                $program->presenter = $request->input('presenter');
+                $program->user_id = Auth::user()->id;
+
+                $program->save();
+            }
+            DB::commit();
+            toastr()->success('New Program Created');
+        }catch (\Exception $exception){
+            DB::rollBack();
+            toastr()->warning('Something went wrong! Try again');
+        }
+
+        return back();
+
+
     }
 
+
+    public function uploadPrograms(Request $request)
+    {
+//        dd(request()->file('file'));
+        $programs=   Excel::toCollection(new ProgramsImport(), request()->file('file'));
+
+        foreach ($programs[0] as $program => $value){
+
+            //calculate duration in HOurs
+            $start_time = Carbon::parse($program['start_time']);
+            $end_time = Carbon::parse($program['end_time']);
+            //end calculation
+
+            $user= Program::updateOrCreate(
+                [
+                    'program_name' => $program['program_name'],
+                    'day'=>$program['day'],
+                    'radio_station_id'=>$request->input('radio_station_id')
+                ],
+                [
+                    'start_time' => $program['start_time'],
+                    'end_time' => $program['end_time'],
+                    'duration'=>round($end_time->diffInMinutes($start_time) / 60),
+                    'presenter'=>$program['presenter'],
+                    'user_id'=> Auth::user()->id,
+                ]);
+
+        }
+        toastr()->success(count($programs[0]).' Candidate Uploaded Successfully');
+        return back();
+    }
     /**
      * Display the specified resource.
      *

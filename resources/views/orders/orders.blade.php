@@ -55,7 +55,7 @@
                                                     <div class="col-sm-6">
                                                         <label for="example-text-input">Received Date</label>
                                                         <div class="input-group">
-                                                            <input type="text" name="schedule_date" required class="form-control p-2 datetimepicker-input" id="datetimepicker1" data-toggle="datetimepicker" data-target="#datetimepicker1"/>
+                                                            <input type="text" name="received_date" required class="form-control p-2 datetimepicker-input" id="datetimepicker1" data-toggle="datetimepicker" data-target="#datetimepicker1"/>
                                                             <div class="input-group-append bg-custom b-0"><span class="input-group-text"><i class="mdi mdi-calendar"></i></span></div>
                                                             <div class="invalid-feedback">
                                                                 Date required
@@ -88,8 +88,8 @@
                                                     </div>
                                                     <div class="col-md-6">
                                                         <label for="adverts-order">Adverts</label>
-                                                        <select class="form-control p-1 js-example-basic-single" style="width: 100%" id="adverts-order" required >
-                                                            <option value="">Select Agency</option>
+                                                        <select class="form-control p-1 js-example-basic-single" style="width: 100%" id="adverts-order" required name="advert_id">
+                                                            <option value="">Select Advert</option>
                                                         </select>
                                                         <div class="invalid-feedback">
                                                             Agency is required
@@ -99,7 +99,7 @@
                                                         <label for="example-text-input">Start Date</label>
                                                         <div class="input-group date"  id="datetimepicker6" data-target-input="nearest">
                                                             <div class="input-group" data-target="#datetimepicker6" data-toggle="datetimepicker">
-                                                                <input type="text" name="start_date_time" required class="form-control datetimepicker-input" data-target="#datetimepicker6"/>
+                                                                <input type="text" name="start_date" required class="form-control datetimepicker-input" data-target="#datetimepicker6"/>
                                                                 <div class="input-group-addon input-group-append"><i class="mdi mdi-clock input-group-text"></i></div>
                                                                 <div class="invalid-feedback" >
                                                                     Start Date and Time required
@@ -108,12 +108,12 @@
                                                         </div>
                                                     </div>
                                                     <div class="col-sm-6">
-                                                        <label for="example-text-input">Start Date</label>
+                                                        <label for="example-text-input">End Date</label>
                                                         <div class="input-group date"  id="datetimepicker7" data-target-input="nearest">
                                                             <div class="input-group" data-target="#datetimepicker7" data-toggle="datetimepicker">
-                                                                <input required type="text" name="end_date_time" class="form-control datetimepicker-input" data-target="#datetimepicker7"/>
+                                                                <input required type="text" name="end_date" class="form-control datetimepicker-input" data-target="#datetimepicker7"/>
                                                                 <div class="input-group-addon input-group-append"><i class="mdi mdi-clock input-group-text"></i></div>
-                                                                <div class="invalid-feedback" >
+                                                                <div class="invalid-feedback">
                                                                     End Date and Time required
                                                                 </div>
                                                             </div>
@@ -129,11 +129,11 @@
                                     </form>
                                 </div><!-- /.modal-dialog -->
                             </div><!-- /.modal -->
-                            @if(empty($orders))
+                           {{-- @if(empty($orders))
                                 <div class="col-md-12 text-center">
                                     <a href="{{route('all-orders')}}">All orders</a>
                                 </div>
-                            @endif
+                            @endif--}}
                         </div>
                     </div>
                 </div>
@@ -160,35 +160,32 @@
                                             <tr>
                                                 <th></th>
                                                 <th scope="col">ID</th>
-                                                <th scope="col">Name</th>
-                                                <th scope="col">Address</th>
-                                                <th scope="col">Fax</th>
-                                                <th scope="col">Email</th>
-                                                <th scope="col">Phone</th>
-                                                <th scope="col">Discount</th>
+                                                <th scope="col">Order #</th>
+                                                <th scope="col">Agency</th>
+                                                <th scope="col">Advert</th>
+                                                <th scope="col">Date Received</th>
+                                                <th scope="col">Start Date</th>
+                                                <th scope="col">End Date</th>
                                                 <th scope="col">Station ID</th>
-                                                <th scope="col">Contact Person</th>
                                                 <th scope="col">Station</th>
                                                 <th scope="col">Edit</th>
                                             </tr>
                                             </thead>
                                             <tbody>
                                             @php($i =1)
-                                            @foreach($orders as $agency)
+                                            @foreach($orders as $order)
                                                 <tr>
                                                     <td>
-
                                                     </td>
-                                                    <td>{{$agency->id}}</td>
-                                                    <td>{{$agency->agency_name}}</td>
-                                                    <td>{{$agency->address}}</td>
-                                                    <td>{{$agency->fax}}</td>
-                                                    <td>{{$agency->email}}</td>
-                                                    <td>{{$agency->phone_number}}</td>
-                                                    <td>{{$agency->discount}}</td>
-                                                    <td>{{$agency->radio_station->id}}</td>
-                                                    <td>{{$agency->contact_person}}</td>
-                                                    <td>{{$agency->radio_station->name}}</td>
+                                                    <td>{{$order->id}}</td>
+                                                    <td>{{$order->order_number}}</td>
+                                                    <td>{{$order->agency->agency_name}}</td>
+                                                    <td>{{$order->advert->name}}</td>
+                                                    <td>{{$order->received_date}}</td>
+                                                    <td>{{$order->start_date}}</td>
+                                                    <td>{{$order->start_date}}</td>
+                                                    <td>{{$order->radio_station->id}}</td>
+                                                    <td>{{$order->radio_station->name}}</td>
                                                     <td>
                                                         <a href="javascript:void(0)" class="btn edit-agency"> <i class="mdi mdi-pencil"></i> </a>
                                                     </td>

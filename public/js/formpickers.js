@@ -35,6 +35,22 @@
 
 
 
+    $('#start-time').datetimepicker({
+        format:'LT'
+    });
+    $('#end-time').datetimepicker({
+        format:'LT',
+        useCurrent: false
+    });
+    $("#start-time").on("change.datetimepicker", function (e) {
+        $('#end-time').datetimepicker('minDate', e.date);
+    });
+    $("#end-time").on("change.datetimepicker", function (e) {
+        $('#start-time').datetimepicker('maxDate', e.date);
+    });
+
+
+
     if ($("#datepicker-popup").length) {
         $('#datepicker-popup').datepicker({
             enableOnReadonly: true,

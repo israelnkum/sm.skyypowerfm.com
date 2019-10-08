@@ -7,6 +7,8 @@ use App\Agency;
 use App\Order;
 use App\RadioStation;
 use Illuminate\Http\Request;
+use Illuminate\Support\Facades\Auth;
+use Illuminate\Support\Facades\DB;
 
 class OrderController extends Controller
 {
@@ -23,7 +25,8 @@ class OrderController extends Controller
     {
         $agencies = Agency::all();
         $adverts = Advert::all();
-        $orders = Order::all();
+        $orders = Order::with('radio_station','agency','advert')->get();
+
         $radio_stations = RadioStation::all();
         return view('orders.orders',compact('orders','agencies','adverts','radio_stations'));
     }
@@ -62,9 +65,7 @@ class OrderController extends Controller
     public function store(Request $request)
     {
         $radio_station = RadioStation::find($request->input('radio_station_id'));
-
         $countAdverts = Order::where('radio_station_id',$request->input('radio_station_id'))->get()->count();
-
         if ($countAdverts == 0){
             $order_number=  $radio_station->ad_prefix."-".substr(date('Ymd-'),'2').'001';
         }else {
@@ -78,21 +79,43 @@ class OrderController extends Controller
                 $advert_year= substr($add_num,0,2);
                 $current_year = substr(date('Y'), 2);
 
+//                return $add_num;
 
                 if ($advert_year == $current_year) {
 
-                    $order_number = $radio_station->ad_prefix."-".substr(($add_num),0,2).date('m')."-".substr(($add_num),4);
+                    $order_number = $radio_station->ad_prefix."-".substr($add_num,0,2).date('md')."-".substr($add_num,6);
 
                     // return $order_number;
 
                 } else {
                     $order_number = $radio_station->ad_prefix."-".substr(date('Ymd-'),'2').'001';
-//
-
+//               return $order_number;
                 }
             }
         }
-        return $order_number;
+
+//        return "yes";
+        DB::beginTransaction();
+        try{
+            $order = new Order();
+            $order->radio_station_id = $request->input('radio_station_id');
+            $order->order_number = $order_number;
+            $order->agency_id = $request->input('agency_id');
+            $order->advert_id = $request->input('advert_id');
+            $order->received_date = str_replace('/','-',$request->input('received_date'));
+            $order->start_date = str_replace('/','-',$request->input('start_date'));
+            $order->end_date = str_replace('/','-',$request->input('end_date'));
+            $order->user_id = Auth::user()->id;
+            $order->save();
+
+            DB::commit();
+            toastr()->success('Order Created');
+        }catch (\Exception $exception){
+            DB::rollBack();
+            toastr()->warning('Something Went wrong! Try again');
+        }
+
+        return back();
     }
 
     /**

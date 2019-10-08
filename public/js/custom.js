@@ -1,5 +1,4 @@
 $(document).ready(function () {
-   
     /**
      * Filter Adverts
      */
@@ -42,6 +41,11 @@ $(document).ready(function () {
      * Filter Agency
      */
     $('#select-radio-station').change(function () {
+        $('#adverts-order').empty();
+        $('#adverts-order').append($('<option>', {
+            value: '',
+            text : ''
+        }));
         $.ajax({
             type: 'get',
             url: "filter-agencies",
@@ -70,8 +74,9 @@ $(document).ready(function () {
     });
 
 
+
     /**
-     * Filter Agency for Advertisment
+     * Filter Agency for Advertisement advert.blade.php
      */
     $('#station-advert').change(function () {
         $.ajax({
@@ -453,4 +458,52 @@ $(document).ready(function () {
     } );
 
 
+    /**
+     * Programs Table
+     */
+    let program_ids =[];
+    let program_table = $('#program_table').DataTable( {
+        columnDefs: [ {
+            orderable: false,
+            className: 'select-checkbox',
+            targets:   0
+        } ],
+        select: {
+            style:    'multi',
+            selector: 'td:first-child'
+        },
+        order: [[ 1, 'asc' ]]
+    });
+    program_table.column(1).visible(false);
+
+    $('#program_table tbody').on( 'click', 'td:first-child', function () {
+        // $(this).toggleClass('selected');
+
+        let  $tr = $(this).closest('tr');
+        if ($($tr).hasClass('child')){
+            $tr = $tr.prev('.parent');
+        }
+        let data = program_table.row($tr).data();
+
+        // alert(data[1])
+
+        if (!program_ids.includes(data[1])){
+            program_ids.push(data[1]);
+        }else{
+            for( let i = 0; i < program_ids.length; i++){
+                if ( program_ids[i] === data[1]) {
+                    program_ids.splice(i, 1);
+                }
+            }
+        }
+        $("#selected_programs").val(program_ids);
+
+        if (program_ids.length >0){
+            $('#btn-delete-program').removeAttr('disabled');
+        }  else{
+            $('#btn-delete-program').attr('disabled','disabled');
+
+        }
+    } );
+    /**End programs table */
 });

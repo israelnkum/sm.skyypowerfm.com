@@ -76,7 +76,7 @@ class AdvertController extends Controller
         }else {
 
 
-            $record = Advert::latest('advert_number')->where('radio_station_id',$request->input('radio_station_id'))->first();
+            $record = Advert::where('radio_station_id',$request->input('radio_station_id'))->latest()->first();
             $expNum = $record->advert_number;
 //            return $record;
             if ($expNum == '') {
