@@ -123,6 +123,9 @@ class RadioStationController extends Controller
         //
     }
 
+    public function deleteRadioStation(Request $request){
+        return $request;
+    }
     /**
      * Update the specified resource in storage.
      *

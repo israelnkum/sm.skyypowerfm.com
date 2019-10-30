@@ -252,7 +252,7 @@ $(document).ready(function () {
     /*
     Radio Stations Table
      */
-
+    let radio_stations_ids =[];
     let radio_table = $('#radio-stations-table').DataTable( {
         columnDefs: [ {
             orderable: false,
@@ -286,19 +286,47 @@ $(document).ready(function () {
         $('#edit-radio-fax').val(data[6]);
         $('#edit-radio-prefix').val(data[7]);
 
-
         $('#edit-radio-station-form').attr('action', 'radio-stations/'+data[1]);
         $('#edit-radio-station-modal').modal('show');
         $('#radio-title').text(data[2]);
     });
 
-    //End Radio Stations
+    $('#radio-stations-table tbody').on( 'click', 'td:first-child', function () {
+        // $(this).toggleClass('selected');
+
+        let  $tr = $(this).closest('tr');
+        if ($($tr).hasClass('child')){
+            $tr = $tr.prev('.parent');
+        }
+        let data = radio_table.row($tr).data();
+
+        // alert(data[1])
+
+        if (!radio_stations_ids.includes(data[1])){
+            radio_stations_ids.push(data[1]);
+        }else{
+            for( let i = 0; i < radio_stations_ids.length; i++){
+                if ( radio_stations_ids[i] === data[1]) {
+                    radio_stations_ids.splice(i, 1);
+                }
+            }
+        }
+        $("#selected_radio_stations").val(radio_stations_ids);
+
+        if (radio_stations_ids.length >0){
+            $('#btn-delete-radio').removeAttr('disabled');
+        }  else{
+            $('#btn-delete-radio').attr('disabled','disabled');
+
+        }
+    } );
+    /** End Radio Stations*/
 
 
 
 
 
-    //Users
+        //Users
     let user_ids =[];
 
     let users_table = $('#users-table').DataTable( {
@@ -315,7 +343,7 @@ $(document).ready(function () {
     });
 
     users_table.column(1).visible(false);
-    users_table.column(5).visible(false);
+    users_table.column(6).visible(false);
 
 
 
@@ -364,10 +392,10 @@ $(document).ready(function () {
 
 //     console.log(data);
         $('#edit-u-name').val(data[2]);
-        $('#edit-u-email').val(data[3]);
-        $('#edit-u-phone').val(data[4]);
-        $('#edit-u-radio-stations_id').val(data[5]);
-        $('#edit-u-role').val(data[7]);
+        $('#edit-u-email').val(data[4]);
+        $('#edit-u-phone').val(data[5]);
+        $('#edit-u-radio-stations_id').val(data[6]);
+        $('#edit-u-role').val(data[8]);
 
 
 
@@ -458,6 +486,49 @@ $(document).ready(function () {
     } );
 
 
+
+    /**
+     * Adverts Table
+     */
+    let adverts_table = $('#advert_table').DataTable( {
+        columnDefs: [ {
+            orderable: false,
+            className: 'select-checkbox',
+            targets:   0
+        } ],
+        select: {
+            style:    'multi',
+            selector: 'td:first-child'
+        },
+        order: [[ 1, 'asc' ]]
+    });
+
+    adverts_table.column(1).visible(false);
+    adverts_table.column(4).visible(false);
+    adverts_table.column(7).visible(false);
+
+    adverts_table.on('click','.edit-advert',function () {
+
+        let  $tr = $(this).closest('tr');
+
+        if ($($tr).hasClass('child')){
+            $tr = $tr.prev('.parent');
+        }
+
+        let data = adverts_table.row($tr).data();
+
+//     console.log(data);
+        $('#edit-ad-name').val(data[2]);
+        $('#edit-ad-station').val(data[7]).trigger('change');
+        $('#edit-ad-agency').val(data[4]).trigger('change');
+
+
+
+
+        $('#edit-advert-form').attr('action', 'adverts/'+data[1]);
+        $('.edit-advert-modal').modal('show');
+        $('#advert-title').text(data[2]);
+    });
     /**
      * Programs Table
      */
@@ -506,4 +577,71 @@ $(document).ready(function () {
         }
     } );
     /**End programs table */
+
+
+    /**
+     * Play Commercial
+     */
+    for (let i =1; i<=1000; i++){
+        $('#play-commercial-form'+i).on('submit',function (e) {
+            e.preventDefault();
+            $.ajax({
+                type: 'post',
+                url: "play-commercials",
+                data: $("#play-commercial-form"+i).serialize(),
+                success: function (response){
+                    document.getElementById('play'+i).play();
+                    console.log(response);
+                    // fetch_data();
+                },
+                error:function (error) {
+                    console.log(error);
+                }
+            });
+        });
+    }
+
+    /**
+     * End Playing Commercial
+     */
+
+    /**
+     *
+     * Transaction Certificate
+     * filter orders based on selected adverts
+     */
+
+    /**
+     * Filter Adverts
+     **/
+     $('#tc-agencies').change(function () {
+        $.ajax({
+            type: 'get',
+            url: "filter-tc-orders",
+            data: {
+                agency_id: $('#tc-agencies').val(),
+                _token: "{{ csrf_token() }}"
+            },
+            success: function (data) {
+                console.log(data);
+                data = $.parseJSON(data);
+                $('#tc-orders').empty();
+                $('#tc-orders').append($('<option>', {
+                    value: '',
+                    text : ''
+                }));
+                for(let count =0; count<data.length; count++){
+                    $('#tc-orders').append($('<option>', {
+                        value: data[count].order_number,
+                        text : data[count].order_number
+                    }));
+                }
+              },
+            error:function (error) {
+                console.log(error);
+            }
+        });
+    });
+
+
 });

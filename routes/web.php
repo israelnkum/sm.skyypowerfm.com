@@ -26,8 +26,9 @@ Route::get('/home', 'HomeController@index')->name('home');
  */
 Route::resource('commercials', 'CommercialController');
 Route::get('all-commercials', 'CommercialController@all_commercials')->name('all-commercials');
+Route::post('filter-programs', 'CommercialController@filterPrograms')->name('filter-programs');
 
-
+Route::resource('play-commercials', 'PlayCommercial');
 /*
  * Agency
  */
@@ -53,7 +54,7 @@ Route::get('delete-tax','TaxController@delete_tax')->name('delete-tax');
  * Radio stations
  */
 Route::resource('radio-stations', 'RadioStationController');
-
+Route::post('delete-radio-stations', 'RadioStationController@deleteRadioStation')->name('delete-radio-stations');
 
 /*
  * Users Route
@@ -61,6 +62,8 @@ Route::resource('radio-stations', 'RadioStationController');
 Route::resource('users', 'UserController');
 Route::get('all-users', 'UserController@all_users')->name('all-users');
 Route::get('delete-users', 'UserController@delete_users')->name('delete-users');
+Route::get('export-users', 'UserController@export')->name('export-users');
+Route::get('search-users', 'UserController@search_users')->name('search-users');
 
 /*
  * Users Route
@@ -87,3 +90,20 @@ Route::resource('programs', 'ProgramController');
 Route::get('all-programs', 'ProgramController@allPrograms')->name('all-programs');
 Route::post('delete-programs', 'ProgramController@deletePrograms')->name('delete-programs');
 Route::post('upload-programs', 'ProgramController@uploadPrograms')->name('upload-programs');
+Route::get('search-programs', 'ProgramController@searchPrograms')->name('search-programs');
+Route::get('filter-programs', 'ProgramController@filterPrograms')->name('filter-programs');
+
+
+/**
+ * Transaction Certificate
+ */
+
+Route::resource('tc-s', 'TransmissionCertificateController');
+Route::get('filter-tc-orders', 'TransmissionCertificateController@filterOrders')->name('filter-tc-orders');
+
+
+/*
+ * Invoice
+ */
+
+Route::resource('invoice','InvoiceController');

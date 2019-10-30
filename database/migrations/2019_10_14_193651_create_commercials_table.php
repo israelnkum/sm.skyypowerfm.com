@@ -4,7 +4,7 @@ use Illuminate\Support\Facades\Schema;
 use Illuminate\Database\Schema\Blueprint;
 use Illuminate\Database\Migrations\Migration;
 
-class CreateAdvertsTable extends Migration
+class CreateCommercialsTable extends Migration
 {
     /**
      * Run the migrations.
@@ -13,14 +13,15 @@ class CreateAdvertsTable extends Migration
      */
     public function up()
     {
-        Schema::create('adverts', function (Blueprint $table) {
+        Schema::create('commercials', function (Blueprint $table) {
             $table->bigIncrements('id');
-            $table->integer('agency_id');
             $table->integer('radio_station_id');
-            $table->string('advert_number',20);
-            $table->string('name',200);
-            $table->string('audio_file')->default('Upload file')->nullable();
-            $table->integer('user_id');
+            $table->integer('order_id');
+            $table->integer('program_id');
+            $table->integer('agency_id');
+            $table->integer('advert_id');
+            $table->string('date',20)->nullable();
+            $table->string('time',10)->nullable();
             $table->timestamps();
         });
     }
@@ -32,6 +33,6 @@ class CreateAdvertsTable extends Migration
      */
     public function down()
     {
-        Schema::dropIfExists('adverts');
+        Schema::dropIfExists('commercials');
     }
 }

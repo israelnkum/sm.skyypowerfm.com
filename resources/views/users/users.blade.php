@@ -4,8 +4,34 @@
         <div class="container">
             <!-- Page-Title -->
             <div class="row">
-                <div class="col-sm-6">
+                <div class="col-sm-2">
                     <h3>Users</h3>
+                </div>
+                <div class="col-md-6">
+                    <form class="needs-validation" novalidate action="{{route('search-users')}}" method="get">
+                        @csrf
+                        <div class="form-group row mb-1">
+                            <div class="col-md-12">
+                                <div class="input-group">
+                                    <input type="text" name="search" required class="form-control p-2" id="" placeholder="Search by Email | Username | Name | Phone">
+                                    <div class="input-group-prepend">
+                                        <button type="submit" class="btn input-group-text p-2"><i class="mdi mdi-magnify"></i></button>
+                                    </div>
+                                    <div class="invalid-feedback">
+                                        Search by program name
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </form>
+                </div>
+                <div class="col-md-4 text-right">
+                    @if(!empty($users))
+                        <a href="{{route('all-users')}}">All Users</a>
+                    @endif
+                    <button class="btn btn-primary  waves-effect waves-light"  data-toggle="modal" data-target=".bs-example-modal-sm" type="button" >
+                        <i class="ti-user mr-1"></i> New User
+                    </button>
                 </div>
             </div>
             <div class="page-header-tab mb-1"></div>
@@ -13,32 +39,6 @@
                 <div class="col-sm-12">
                     <div class="page-title-box ">
                         <div class="row ">
-                            <div class="col-md-2">
-                            </div>
-                            <div class="col-md-6">
-                                <form class="needs-validation" novalidate action="" method="get">
-                                    @csrf
-                                    <div class="form-group row">
-                                        <div class="col-md-12">
-                                            <div class="input-group mb-2 mr-sm-2">
-                                                <input type="text" required class="form-control" id="" placeholder="Type to search">
-                                                <div class="input-group-prepend">
-                                                    <button type="submit" class="btn input-group-text"><i class="mdi mdi-magnify"></i></button>
-                                                </div>
-                                                <div class="invalid-feedback">
-                                                    Type something to search
-                                                </div>
-                                            </div>
-                                        </div>
-                                    </div>
-                                </form>
-                            </div>
-
-                            <div class="col-md-4 text-right">
-                                <button class="btn btn-primary  waves-effect waves-light"  data-toggle="modal" data-target=".bs-example-modal-sm" type="button" >
-                                    <i class="ti-user mr-1"></i> New User
-                                </button>
-                            </div>
                             <div class="modal fade bs-example-modal-sm" tabindex="-1" role="dialog" aria-labelledby="mySmallModalLabel" aria-hidden="true">
                                 <div class="modal-dialog">
                                     <form method="POST" action="{{ route('users.store') }}" novalidate class="needs-validation">
@@ -160,20 +160,36 @@
             </div>
             @if(!empty($users))
                 <div class="row">
-                    <div class="col-xl-12">
+                    <div class="col-md-12">
                         <div class="card">
-                            <form action="{{route('delete-users')}}" onsubmit="return confirm('Please Confirm Delete')">
-                                @csrf
-                                <input type="hidden" name="selected_ids" id="user_ids" class="form-control p-2">
-                                <div class="card-body">
-                                    <div class="row">
-                                        <div class="col-md-4">
-                                            <h4 class="mt-0 header-title mb-4">All Users</h4>
+                            <div class="card-body">
+                                {{--<form action="">
+                                    <div class="form-group row">
+                                        <div class="col-md-3 offset-md-9">
+                                            <select class="form-control filter-items" name="" id="">
+                                                <option value="">Filter</option>
+                                                @foreach($radio_stations as $station)
+                                                    <option value="{{$station->id}}">{{$station->name}}</option>
+                                                @endforeach
+                                            </select>
                                         </div>
-                                        <div class="col-md-8 text-right">
+                                    </div>
+                                </form>--}}
+                                <form action="{{route('delete-users')}}" onsubmit="return confirm('Please Confirm Delete')">
+                                    @csrf
+                                    <input type="hidden" name="selected_ids" id="user_ids" class="form-control p-2">
 
-                                            <button class="btn btn-link text-danger" type="submit" id="btn-delete-users" disabled><i class="mdi mdi-trash-can-outline"></i> Delete</button>
+                                    <div class="d-flex flex-wrap justify-content-between">
+                                        <h4 class="card-title">All Users</h4>
+                                        <div class="dropdown dropleft card-menu-dropdown">
+                                            <button class="btn btn-link text-danger" type="submit" id="btn-delete-users" disabled> Delete</button>
 
+                                            <button class="btn p-0" type="button" id="dropdown12" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
+                                                <i class="mdi mdi-dots-vertical card-menu-btn"></i>
+                                            </button>
+                                            <div class="dropdown-menu" aria-labelledby="dropdown12" x-placement="left-start">
+                                                <a class="dropdown-item" href="{{route('export-users')}}">Export</a>
+                                            </div>
                                         </div>
                                     </div>
                                     <div class="table-responsive">
@@ -181,10 +197,10 @@
                                             <thead>
                                             <tr>
                                                 <th>
-
                                                 </th>
                                                 <th>ID</th>
                                                 <th>Name</th>
+                                                <th>Username</th>
                                                 <th>Email</th>
                                                 <th>Phone</th>
                                                 <th>Radio ID</th>
@@ -202,6 +218,7 @@
                                                     </td>
                                                     <td>{{$user->id}}</td>
                                                     <td>{{$user->name}}</td>
+                                                    <td>{{$user->username}}</td>
                                                     <td>{{$user->email}}</td>
                                                     <td>{{$user->phone_number}}</td>
                                                     <td>{{$user->radio_station->id}}</td>
@@ -215,9 +232,8 @@
                                             </tbody>
                                         </table>
                                     </div>
-
-                                </div>
-                            </form>
+                                </form>
+                            </div>
                         </div>
                     </div>
                 </div>

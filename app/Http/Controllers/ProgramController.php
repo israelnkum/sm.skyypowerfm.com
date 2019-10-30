@@ -2,6 +2,7 @@
 
 namespace App\Http\Controllers;
 
+use App\Commercial;
 use App\Imports\ProgramsImport;
 use App\Program;
 use App\RadioStation;
@@ -40,18 +41,43 @@ class ProgramController extends Controller
 
     public function allPrograms(){
         $radio_stations = RadioStation::all();
-        $programs = Program::with('radio_station')->get();
+        $programs = Program::with('radio_station')->get()
+            ->groupBy('program_name','radio_station_id');
+
+        return view('programs.programs',compact('radio_stations','programs'));
+    }
+
+    public function filterPrograms(Request $request){
+        $radio_stations = RadioStation::all();
+        $programs = Program::with('radio_station')
+            ->where('radio_station_id',$request->input('filter_programs'))->get()
+            ->groupBy('program_name','radio_station_id');
+
         return view('programs.programs',compact('radio_stations','programs'));
     }
     public function deletePrograms(Request $request){
 
-        $selected_id = explode(',',$request->input('selected_programs'));;
-        foreach ($selected_id as $value){
-            $level = Program::find($value);
-            $level->delete();
-        }
 
-        toastr()->success(count($selected_id).' Program(s) Deleted');
+        DB::beginTransaction();
+        try{
+            foreach ($request->input('programs_ids') as $value){
+                $program = Program::find($value);
+                $program->delete();
+
+
+                $commercial = Commercial::where('program_id', $value)->first();
+                if (!empty($commercial)){
+                    $commercial->delete();
+                }
+            }
+
+            DB::commit();
+            toastr()->success($program->program_name.' Deleted For all Days');
+        }catch (\Exception $exception){
+
+            DB::rollBack();
+            toastr()->warning('Something went wrong! Please try again');
+        }
         return back();
     }
     /**
@@ -92,10 +118,17 @@ class ProgramController extends Controller
         }
 
         return back();
-
-
     }
 
+    public function searchPrograms(Request $request){
+        $programs = Program::with('radio_station')
+            ->where('program_name', 'like', '%' . $request->input("search") . '%')
+            ->get()->groupBy('program_name','radio_station_id');
+
+//        return $programs
+        $radio_stations = RadioStation::all();
+        return view('programs.programs',compact('radio_stations','programs'));
+    }
 
     public function uploadPrograms(Request $request)
     {
@@ -169,6 +202,25 @@ class ProgramController extends Controller
      */
     public function destroy($id)
     {
-        //
+
+//    return $program;
+        DB::beginTransaction();
+        try{
+            $program = Program::find($id);
+            $program->delete();
+
+            $commercials = Commercial::where('program_id', $id)->get();
+            foreach ($commercials as $commercial){
+                $commercial->delete();
+            }
+
+            DB::commit();
+            toastr()->success($program->program_name.' Deleted Successfully for '.$program->day);
+        }catch (\Exception $exception){
+            DB::rollBack();
+            toastr()->success('Something went wrong! Try Again');
+        }
+
+        return back();
     }
 }

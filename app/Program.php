@@ -13,4 +13,8 @@ class Program extends Model
     public function radio_station(){
         return $this->belongsTo('App\RadioStation');
     }
+
+    public function commercials(){
+        return $this->hasMany('App\Commercial');
+    }
 }

@@ -1,4 +1,5 @@
 (function($) {
+
     'use strict';
     /*if ($("#timepicker-example").length) {
         $('#timepicker-example').datetimepicker({
@@ -20,11 +21,13 @@
 
 
     $('#datetimepicker6').datetimepicker({
-        format:'L'
+        format: 'YYYY-MM-DD',
+        // useCurrent: false
     });
     $('#datetimepicker7').datetimepicker({
-        format:'L',
-        useCurrent: false
+        format: 'YYYY-MM-DD',
+        useCurrent: false,
+        autoclose: false
     });
     $("#datetimepicker6").on("change.datetimepicker", function (e) {
         $('#datetimepicker7').datetimepicker('minDate', e.date);

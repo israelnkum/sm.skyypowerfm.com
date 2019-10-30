@@ -15,6 +15,11 @@ class CreateTransmissionCertificatesTable extends Migration
     {
         Schema::create('transmission_certificates', function (Blueprint $table) {
             $table->bigIncrements('id');
+            $table->integer('order_id');
+            $table->string('order_number',20);
+            $table->integer('agency_id');
+            $table->integer('advert_id');
+            $table->string('date_time',50);
             $table->timestamps();
         });
     }

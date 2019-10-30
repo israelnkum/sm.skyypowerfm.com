@@ -28135,10 +28135,8 @@ div.tagsinput span.tag a {
 }
 
 .content-wrapper {
-    padding: 2rem 0;
     width: 100%;
-    padding-right: 15px;
-    padding-left: 15px;
+    padding: 1rem 15px;
     margin-right: auto;
     margin-left: auto;
     min-height: calc(100vh - 135px - 75px);

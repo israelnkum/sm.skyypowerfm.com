@@ -8,12 +8,12 @@
                     <h3>Programs</h3>
                 </div>
                 <div class="col-md-6">
-                    <form class="needs-validation" novalidate action="" method="get">
+                    <form class="needs-validation" novalidate action="{{route('search-programs')}}" method="get">
                         @csrf
-                        <div class="form-group row">
+                        <div class="form-group row mb-1">
                             <div class="col-md-12">
                                 <div class="input-group">
-                                    <input type="text" required class="form-control p-2" id="" placeholder="Type to search in programs">
+                                    <input name="search" type="text" required class="form-control p-2" id="" placeholder="Search Program Name">
                                     <div class="input-group-prepend">
                                         <button type="submit" class="btn input-group-text p-2"><i class="mdi mdi-magnify"></i></button>
                                     </div>
@@ -28,7 +28,7 @@
 
                 <div class="col-md-4 text-right">
                     <button class="btn btn-primary p-2  waves-effect waves-light"  data-toggle="modal" data-target=".bs-example-modal-sm" type="button" >
-                        <i class="mdi mdi-plus-circle mr-1"></i> New/Upload Program
+                        <i class="mdi mdi-plus-circle mr-1"></i> New Program
                     </button>
                 </div>
             </div>
@@ -43,7 +43,7 @@
                             </button>
                         </div>
                         <div class="modal-body">
-                            <div class="row mb-2">
+                            {{--<div class="row mb-2">
                                 <div class="col-md-6">
                                     <h5 class="mb-0">
                                         <a data-toggle="collapse" class="text-decoration-none" href="#collapse-4" aria-expanded="false" aria-controls="collapse-4">
@@ -58,7 +58,7 @@
                                         </a>
                                     </h5>
                                 </div>
-                            </div>
+                            </div>--}}
                             <div class="accordion accordion-bordered" id="accordion-2" role="tablist">
 
                                 <div id="collapse-4" class="collapse show" role="tabpanel" aria-labelledby="heading-4" data-parent="#accordion-2">
@@ -178,7 +178,7 @@
                 </div><!-- /.modal-dialog -->
             </div><!-- /.modal -->
 
-            <div class="row">
+            <div class="row mt-3">
                 <div class="col-sm-12 text-center">
                     <div class="page-title-box ">
                         @if(empty($programs))
@@ -198,64 +198,134 @@
                 <div class="row">
                     <div class="col-xl-12">
                         <div class="card">
-                            <form action="{{route('delete-programs')}}" method="post" onsubmit="return confirm('Please Confirm Delete')">
-                                @csrf
-                                <input type="hidden" class="form-control" name="selected_programs" id="selected_programs">
-                                <div class="card-body">
-                                    <div class="row">
-                                        <div class="col-md-4">
-                                            <h4 class="mt-0 header-title mb-4">All programs</h4>
-                                        </div>
-                                        <div class="col-md-8 text-right">
-                                            <button class="btn btn-link text-danger text-decoration-none" type="submit" id="btn-delete-program" disabled><i class="mdi mdi-trash-can-outline"></i> Delete</button>
-                                        </div>
+                            <input type="hidden" class="form-control" name="selected_programs" id="selected_programs">
+                            <div class="card-body">
+                                <div class="row p-0">
+                                    <div class="col-md-4">
+                                        <h4 class="mt-0 header-title mb-4">All programs</h4>
                                     </div>
-                                    <div class="table-responsive">
-                                        <table id="program_table" class="table table-hover">
-                                            <thead>
-                                            <tr>
-                                                <th></th>
-                                                <th scope="col">ID</th>
-                                                <th scope="col">#</th>
-                                                <th scope="col">Name</th>
-                                                <th scope="col">Station ID</th>
-                                                <th scope="col">Station</th>
-                                                <th scope="col">Day</th>
-                                                <th scope="col">Start Time</th>
-                                                <th scope="col">End Time</th>
-                                                <th scope="col">Duration</th>
-                                                <th scope="col">Presenter</th>
-                                                <th scope="col">Edit</th>
-                                            </tr>
-                                            </thead>
-                                            <tbody>
-                                            @php($i =1)
-                                            @foreach($programs as $program)
-                                                <tr>
-                                                    <td>
-                                                    </td>
-                                                    <td>{{$program->id}}</td>
-                                                    <td>{{$i}}</td>
-                                                    <td>{{$program->program_name}}</td>
-                                                    <td>{{$program->radio_station_id}}</td>
-                                                    <td>{{$program->radio_station->name}}</td>
-                                                    <td>{{$program->day}}</td>
-                                                    <td>{{$program->start_time}}</td>
-                                                    <td>{{$program->end_time}}</td>
-                                                    <td>{{$program->duration}} hours</td>
-                                                    <td>{{$program->presenter}}</td>
-                                                    <td>
-                                                        <a href="javascript:void(0)" class="btn edit-program"> <i class="mdi mdi-pencil"></i> </a>
-                                                    </td>
-                                                </tr>
-                                                @php($i+=2)
-                                            @endforeach
-                                            </tbody>
-                                        </table>
+                                    <div class="col-md-2 offset-md-6">
+                                        <form action="{{route('filter-programs')}}" method="get" id="filter-programs-form">
+                                            <select class="form-control filter-items" name="filter_programs" id="filter-programs">
+                                                <option value="">Filter</option>
+                                                @foreach($radio_stations as $radio)
+                                                    <option value="{{$radio->id}}">{{$radio->name}}</option>
+                                                @endforeach
+                                            </select>
+                                        </form>
                                     </div>
-
                                 </div>
-                            </form>
+                                <div class="accordion accordion-bordered" id="all-programs-accordion" role="tablist">
+                                    @php($i=1)
+                                    @foreach($programs as $group => $program)
+                                        <div class="card  border-0 p-0">
+                                            <div class="card-header p-1" role="tab" id="heading-4">
+                                                <div class="d-flex justify-content-between p-0 align-items-center">
+                                                    <a data-toggle="collapse" href="#group-{{$i}}" aria-expanded="false" aria-controls="collapse-4">
+                                                        {{$group}}
+
+                                                    </a>
+                                                    {{--Delete whole program for all days--}}
+                                                    <form class="p-0" onsubmit="return confirm('NOTE:\n All Commercials Under this program will also be deleted\n Please Confirm Delete!')" action="{{route('delete-programs')}}" method="post">
+                                                        @csrf
+                                                        @foreach($program as $pro)
+                                                            <input name="programs_ids[]" type="hidden" value="{{$pro->id}}">
+                                                        @endforeach
+                                                        <button title="Delete {{$group}}" class="btn btn-link text-danger text-decoration-none" type="submit">
+                                                            <i class="mdi mdi-trash-can-outline"></i> Delete
+                                                        </button>
+                                                    </form>
+                                                    {{--End Delete whole program for all days--}}
+                                                </div>
+                                            </div>
+                                            <div id="group-{{$i}}" class="collapse" role="tabpanel" aria-labelledby="heading-4" data-parent="#all-programs-accordion">
+                                                <div class="card-body">
+                                                    <div class="row">
+                                                        <div class="col-md-6">
+                                                            <table class="table table-borderless">
+                                                                <tr>
+                                                                    <th>Day</th>
+                                                                    <th>Start time</th>
+                                                                    <th>End Time</th>
+                                                                    <th>Delete</th>
+                                                                </tr>
+                                                                <tbody>
+                                                                @foreach($program as $pro)
+                                                                    <tr>
+                                                                        <td>{{$pro->day}}</td>
+                                                                        <td>{{$pro->start_time}}</td>
+                                                                        <td>{{$pro->end_time}}</td>
+                                                                        <td>
+                                                                            {{--Delete whole program for a specific day--}}
+                                                                            <form onsubmit="return confirm('Please Confirm Delete')" method="post" action="{{route('programs.destroy',$pro->id)}}">
+                                                                                @csrf
+                                                                                {!! method_field('delete') !!}
+                                                                                <button class="btn btn-sm" title="Delete {{$group}} for {{$pro->day}}'s" >
+                                                                                    <i class="mdi mdi-trash-can text-danger"></i>
+                                                                                </button>
+                                                                            </form>
+                                                                            {{--End Delete whole program for a specific day--}}
+                                                                        </td>
+                                                                    </tr>
+                                                                @endforeach
+                                                                </tbody>
+                                                            </table>
+                                                        </div>
+                                                    </div>
+                                                </div>
+                                            </div>
+                                        </div>
+                                        @php($i++)
+                                    @endforeach
+                                </div>
+                                {{-- <div class="table-responsive">
+                                     <table id="program_table" class="table table-hover">
+                                         <thead>
+                                         <tr>
+                                             <th></th>
+                                             <th scope="col">ID</th>
+                                             <th scope="col">#</th>
+                                             <th scope="col">Name</th>
+                                             <th scope="col">Station ID</th>
+                                             <th scope="col">Station</th>
+                                             <th scope="col">Day</th>
+                                             <th scope="col">Start Time</th>
+                                             <th scope="col">End Time</th>
+                                             <th scope="col">Duration</th>
+                                             <th scope="col">Presenter</th>
+                                             <th scope="col">Edit</th>
+                                         </tr>
+                                         </thead>
+                                         <tbody>
+                                         @php($i =1)
+                                         @foreach($programs as $group => $program)
+                                             --}}{{--                                                {{$program[0]->id}}--}}{{--
+                                             {{$group}}
+                                             @foreach($program as $prog)
+                                                 --}}{{--<tr>
+                                                     <td>
+                                                     </td>
+                                                     <td>{{$prog->id}}</td>
+                                                     <td>{{$i}}</td>
+                                                     <td>{{$program->program_name}}</td>
+                                                     <td>{{$program->radio_station_id}}</td>
+                                                     <td>{{$program->radio_station->name}}</td>
+                                                     <td>{{$program->day}}</td>
+                                                     <td>{{$program->start_time}}</td>
+                                                     <td>{{$program->end_time}}</td>
+                                                     <td>{{$program->duration}} hours</td>
+                                                     <td>{{$program->presenter}}</td>
+                                                     <td>
+                                                         <a href="javascript:void(0)" class="btn edit-program"> <i class="mdi mdi-pencil"></i> </a>
+                                                     </td>
+                                                 </tr>--}}{{--
+                                             @endforeach
+                                             @php($i+=2)
+                                         @endforeach
+                                         </tbody>
+                                     </table>
+                                 </div>--}}
+                            </div>
                         </div>
                     </div>
                 </div>

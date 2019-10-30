@@ -83,7 +83,7 @@
                         <li class="nav-item">
                             <a class="nav-link" href="{{route('home')}}">
                                 <i class="mdi mdi-shield-check menu-icon"></i>
-                                <span class="menu-title">Dashboard</span>
+                                <span class="menu-title">Home</span>
                             </a>
                         </li>
                         <li class="nav-item">
@@ -101,7 +101,7 @@
                         <li class="nav-item">
                             <a class="nav-link" href="{{route('adverts.index')}}">
                                 <i class="mdi mdi-email menu-icon"></i>
-                                <span class="menu-title">Advertisement</span>
+                                <span class="menu-title">Adverts</span>
                             </a>
                         </li>
                         <li class="nav-item">
@@ -115,6 +115,18 @@
                                 <i class="mdi mdi-playlist-edit menu-icon"></i>
                                 <span class="menu-title">Programs</span>
                             </a>
+                        </li>
+                        <li class="nav-item">
+                            <a href="#" class="nav-link">
+                                <i class="mdi mdi-view-headline menu-icon"></i>
+                                <span class="menu-title">TC's/Invoice</span>
+                                <i class="menu-arrow"></i></a>
+                            <div class="submenu">
+                                <ul class="submenu-item">
+                                    <li class="nav-item"><a class="nav-link" href="{{route('tc-s.index')}}">TC</a></li>
+                                    <li class="nav-item"><a class="nav-link" href="pages/forms/advanced_elements.html">Invoice</a></li>
+                               </ul>
+                            </div>
                         </li>
                         <li class="nav-item">
                             <a class="nav-link" href="{{route('users.index')}}">
@@ -202,6 +214,7 @@
 <script src="{{asset('public/js/dragula.min.js')}}"></script>
 <!-- End plugin js for this page -->
 <!-- Custom js for this page-->
+<script src="{{asset('public/js/jquery.print.js')}}"></script>
 <script src="{{asset('public/js/dragula.js')}}"></script>
 <script src="{{asset('public/js/custom.js')}}"></script>
 <script src="{{asset('public/js/summernote-bs4.min.js')}}" referrerpolicy="origin"></script>
@@ -263,7 +276,17 @@
             });
         }, false);
     })();
+
+
+    //Print function
+    $('.print-tc').on('click', function() { // select print button with class "print," then on click run callback function
+        // window.open();
+       // $('.cont').append($('#d_name').text());
+        $('.content-print').print();
+
+    });
 </script>
+
 </body>
 </html>
 

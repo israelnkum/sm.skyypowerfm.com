@@ -2,7 +2,13 @@
 
 namespace App\Http\Controllers;
 
+use App\Commercial;
+use App\Order;
+use App\Program;
+use App\RadioStation;
 use Illuminate\Http\Request;
+use Illuminate\Support\Carbon;
+use Illuminate\Support\Facades\DB;
 
 class CommercialController extends Controller
 {
@@ -25,10 +31,41 @@ class CommercialController extends Controller
      *
      * @return \Illuminate\Http\Response
      */
-    public function create()
+    public function create(Request $request)
     {
-        //
+        $dayOfWeek = $request->input('day_of_week');
+        $hasPrograms = "No";
+        $radio_station = RadioStation::all();
+        if ($request->has('radio-station') && $request->has('day_of_week')){
+            $programs = Program::with('radio_station','commercials.advert')
+                ->where('radio_station_id',$request->input('radio-station'))
+                ->where('day',$request->input('day_of_week'))
+//                ->orderBy('start_time')
+                ->get();
+
+//            return $programs[0]->commercials;
+            $hasPrograms ="Yes";
+
+            $orders = Order::with('advert')
+                ->where('radio_station_id',$request->input('radio-station'))
+//                ->whereDate('start_date','>=', date('Y-m-d'))
+                ->whereDate('start_date', '<=', Carbon::today()->startOfDay())
+                ->whereDate('end_date', '>=', Carbon::today()->startOfDay())
+                ->get();
+
+//            return  $orders;
+            if (count($programs) == 0){
+                toastr()->error('No Programs Found');
+                return back();
+            }
+            return view('commercials.add-commercial',
+                compact('radio_station','programs','hasPrograms','orders','dayOfWeek'));
+        }else{
+            return view('commercials.add-commercial',
+                compact('radio_station','hasPrograms'));
+        }
     }
+
 
     /**
      * Store a newly created resource in storage.
@@ -38,8 +75,42 @@ class CommercialController extends Controller
      */
     public function store(Request $request)
     {
-        //
+        $data= explode(',',$request->input('data'));
+        DB::beginTransaction();
+        try{
+            $checkCommercial = Commercial::where('order_id',$data[0])
+                ->where('advert_id',$data[1])
+                ->where('agency_id',$data[2])
+                ->where('date',$request->input('date'))
+                ->where('time',$request->input('time'))
+                ->first();
+//            return $request;
+            if (!empty($checkCommercial)){
+                toastr()->error('Commercial Already Exist');
+                return back();
+            }
+            $commercial = new Commercial();
+            $commercial->order_id= $data[0];
+            $commercial->advert_id= $data[1];
+            $commercial->agency_id= $data[2];
+            $commercial->radio_station_id = $request->input('radio_station_id');
+            $commercial->program_id= $request->input('program_id');
+            $commercial->date= $request->input('date');
+            $commercial->time= $request->input('time');
+            $commercial->save();
+
+
+            DB::commit();
+            toastr()->success('Commercial Created');
+        }catch (\Exception $exception){
+            DB::rollBack();
+            toastr()->error('Something went wrong! Try again');
+        }
+
+        return back();
     }
+
+
 
     /**
      * Display the specified resource.

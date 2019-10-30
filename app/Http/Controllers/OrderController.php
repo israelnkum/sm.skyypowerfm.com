@@ -25,7 +25,8 @@ class OrderController extends Controller
     {
         $agencies = Agency::all();
         $adverts = Advert::all();
-        $orders = Order::with('radio_station','agency','advert')->get();
+        $orders = Order::with('radio_station','agency','advert')
+            ->get();
 
         $radio_stations = RadioStation::all();
         return view('orders.orders',compact('orders','agencies','adverts','radio_stations'));
@@ -71,49 +72,59 @@ class OrderController extends Controller
         }else {
             $record = Order::where('radio_station_id',$request->input('radio_station_id'))->latest()->first();
             $expNum = $record->order_number;
-//            return $expNum;
             if ($expNum == '') {
                 $order_number = $radio_station->ad_prefix."-". substr(date('Ymd'), '2') . '01';
             } else {
                 $add_num = str_replace([$radio_station->ad_prefix,'-'],'',$expNum)+1;
                 $advert_year= substr($add_num,0,2);
                 $current_year = substr(date('Y'), 2);
-
-//                return $add_num;
-
                 if ($advert_year == $current_year) {
 
                     $order_number = $radio_station->ad_prefix."-".substr($add_num,0,2).date('md')."-".substr($add_num,6);
-
-                    // return $order_number;
-
                 } else {
                     $order_number = $radio_station->ad_prefix."-".substr(date('Ymd-'),'2').'001';
-//               return $order_number;
                 }
             }
         }
 
-//        return "yes";
-        DB::beginTransaction();
-        try{
-            $order = new Order();
-            $order->radio_station_id = $request->input('radio_station_id');
-            $order->order_number = $order_number;
-            $order->agency_id = $request->input('agency_id');
-            $order->advert_id = $request->input('advert_id');
-            $order->received_date = str_replace('/','-',$request->input('received_date'));
-            $order->start_date = str_replace('/','-',$request->input('start_date'));
-            $order->end_date = str_replace('/','-',$request->input('end_date'));
-            $order->user_id = Auth::user()->id;
-            $order->save();
+        for ($i=0; $i<count($request->input('advert_id')); $i++){
 
-            DB::commit();
-            toastr()->success('Order Created');
-        }catch (\Exception $exception){
-            DB::rollBack();
-            toastr()->warning('Something Went wrong! Try again');
+            DB::beginTransaction();
+            try{
+                $checkOrder = Order::where('radio_station_id',$request->input('radio_station_id'))
+                    ->where('agency_id',$request->input('agency_id'))
+                    ->where('advert_id',$request->input('advert_id')[$i])
+                    ->first();
+                $order = new Order();
+                $order->radio_station_id = $request->input('radio_station_id');
+                $order->order_number = $order_number;
+                $order->agency_id = $request->input('agency_id');
+                $order->advert_id = $request->input('advert_id')[$i];
+                $order->received_date = str_replace('/','-',$request->input('received_date'));
+                $order->start_date = $request->input('start_date');
+                $order->end_date = $request->input('end_date');
+                $order->user_id = Auth::user()->id;
+                $order->save();
+
+                if (!empty($checkOrder)){ // if Order already Exist
+                    if (strtotime($request->input('start_date')) < strtotime($checkOrder->end_date)){
+                        DB::rollBack();
+                        toastr()->error('Order Detail Already Exist, Try Update');
+                        return back();
+                    }else{
+                        DB::commit();
+                        toastr()->success('Order Created');
+                    }
+                }else{//if Order is Empty
+                    DB::commit();
+                    toastr()->success('Order Created');
+                }
+            }catch (\Exception $exception){
+                DB::rollBack();
+                toastr()->warning('Something Went wrong! Try again');
+            }
         }
+
 
         return back();
     }

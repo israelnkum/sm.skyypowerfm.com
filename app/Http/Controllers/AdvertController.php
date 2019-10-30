@@ -62,55 +62,56 @@ class AdvertController extends Controller
         DB::beginTransaction();
         try{
             $advert = new Advert();
-        $file = $request->file('audio_file');
-        $fileName = $file->getClientOriginalName();
-        $file->move(public_path('audio_files'), $fileName);
+            $file = $request->file('audio_file');
+            if ($file != ''){
+                $fileName = $file->getClientOriginalName();
+                $file->move(public_path('audio_files'), $fileName);
+                $advert->audio_file = $fileName;
+            }
+            $radio_station = RadioStation::find($request->input('radio_station_id'));
 
-        $radio_station = RadioStation::find($request->input('radio_station_id'));
-
-        $countAdverts = Advert::where('radio_station_id',$request->input('radio_station_id'))->get()->count();
-
-
-        if ($countAdverts == 0){
-            $advert_number=  $radio_station->ad_prefix."-".substr(date('Ym-'),'2').'001';
-        }else {
+            $countAdverts = Advert::where('radio_station_id',$request->input('radio_station_id'))->get()->count();
 
 
-            $record = Advert::where('radio_station_id',$request->input('radio_station_id'))->latest()->first();
-            $expNum = $record->advert_number;
+            if ($countAdverts == 0){
+                $advert_number=  $radio_station->ad_prefix."-".substr(date('Ym-'),'2').'001';
+            }
+            else {
+                $record = Advert::where('radio_station_id',$request->input('radio_station_id'))->latest()->first();
+                $expNum = $record->advert_number;
 //            return $record;
-            if ($expNum == '') {
-                $advert_number = $radio_station->ad_prefix."-". substr(date('Ym'), '2') . '01';
-            } else {
-                $add_num = str_replace([$radio_station->ad_prefix,'-'],'',$expNum)+1;
-                $advert_year= substr($add_num,0,2);
-                $current_year = substr(date('Y'), 2);
-
-
-                if ($advert_year == $current_year) {
-
-                    $advert_number = $radio_station->ad_prefix."-".substr(($add_num),0,2).date('m')."-".substr(($add_num),4);
-
-                    // return $advert_number;
-
+                if ($expNum == '') {
+                    $advert_number = $radio_station->ad_prefix."-". substr(date('Ym'), '2') . '01';
                 } else {
-                    $advert_number = $radio_station->ad_prefix."-".substr(date('Ym-'),'2').'001';
+                    $add_num = str_replace([$radio_station->ad_prefix,'-'],'',$expNum)+1;
+                    $advert_year= substr($add_num,0,2);
+                    $current_year = substr(date('Y'), 2);
+
+
+                    if ($advert_year == $current_year) {
+
+                        $advert_number = $radio_station->ad_prefix."-".substr(($add_num),0,2).date('m')."-".substr(($add_num),4);
+
+                        // return $advert_number;
+
+                    } else {
+                        $advert_number = $radio_station->ad_prefix."-".substr(date('Ym-'),'2').'001';
 //                return $advert_number;
 
+                    }
                 }
             }
-        }
 //        return $advert_number;
-        $advert->agency_id = $request->input('agencies_id');
-        $advert->radio_station_id = $request->input('radio_station_id');
-        $advert->advert_number = $advert_number;
-        $advert->name = $request->input('name');
-        $advert->audio_file = $fileName;
-        $advert->user_id =Auth::user()->id;
-        $advert->save();
+            $advert->agency_id = $request->input('agencies_id');
+            $advert->radio_station_id = $request->input('radio_station_id');
+            $advert->advert_number = $advert_number;
+            $advert->name = $request->input('name');
 
-        DB::commit();
-        toastr()->success('Advert Added');
+            $advert->user_id =Auth::user()->id;
+            $advert->save();
+
+            DB::commit();
+            toastr()->success('Advert Added');
         }catch(\Exception $exception){
             DB::rollBack();
             toastr()->warning('Something Went Wrong Please Try again');

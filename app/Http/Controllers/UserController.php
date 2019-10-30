@@ -2,11 +2,13 @@
 
 namespace App\Http\Controllers;
 
+use App\Exports\UserExport;
 use App\RadioStation;
 use App\User;
 use Illuminate\Http\Request;
 use Illuminate\Http\Response;
 use Illuminate\Support\Facades\Hash;
+use Maatwebsite\Excel\Facades\Excel;
 
 class UserController extends Controller
 {
@@ -27,7 +29,7 @@ class UserController extends Controller
         return view('users.users',compact('radio_stations'));
     }
 
-    /**
+    /**U
      * Show the form for creating a new resource.
      *
      * @return \Illuminate\Http\Response
@@ -64,8 +66,16 @@ class UserController extends Controller
     public function all_users(){
         $users = User::with('radio_station')->get();
 
+        $radio_stations = RadioStation::all();
+        return view('users.users',compact('users','radio_stations'));
+    }
 
-//        return $users[1]->radio_station;
+    public function search_users(Request $request){
+        $users = User::with('radio_station')
+            ->where('email', 'like', '%' . $request->input("search") . '%')
+            ->orWhere('username', 'like', '%' . $request->input("search") . '%')
+            ->orWhere('name', 'like', '%' . $request->input("search") . '%')
+            ->orWhere('phone_number', 'like', '%' . $request->input("search") . '%')->get();
         $radio_stations = RadioStation::all();
         return view('users.users',compact('users','radio_stations'));
     }
@@ -81,6 +91,10 @@ class UserController extends Controller
         //
     }
 
+    public function export()
+    {
+        return Excel::download(new UserExport(), 'Users.xlsx');
+    }
     /**
      * Show the form for editing the specified resource.
      *

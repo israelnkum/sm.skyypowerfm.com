@@ -91,7 +91,10 @@
                                             <div class="col-md-12 col-xl-12 grid-margin stretch-card">
                                                 <div class="card">
                                                     <div class="card-body">
-                                                        <form id="delete-radio-stations-form">
+                                                        <form action="{{route('delete-radio-stations')}}" method="post" onsubmit="return confirm('NOTE:\nEvery Agency, Advert, Programs etc.\nassociated with this station will also be deleted! \nPlease Confirm Delete.')">
+                                                            @csrf
+                                                            <input type="hidden" class="form-control" name="selected_radio_stations" id="selected_radio_stations">
+
                                                             <div class="d-flex flex-wrap justify-content-between">
                                                                 <h4 class="card-title">Radio Stations</h4>
                                                                 <div class="dropdown dropleft card-menu-dropdown">

@@ -28,9 +28,9 @@
                 </div>
 
                 <div class="col-md-4 text-right">
-                    <button class="btn btn-primary p-2  waves-effect waves-light"  data-toggle="modal" data-target=".bs-example-modal-sm" type="button" >
+                    <a href="{{route('commercials.create')}}" class="btn btn-primary p-2  waves-effect waves-light"  role="button" >
                         <i class="mdi mdi-plus-circle mr-1"></i> Add Commercial
-                    </button>
+                    </a>
                 </div>
             </div>
             <div class="modal fade bs-example-modal-sm" tabindex="-1" role="dialog" aria-labelledby="mySmallModalLabel" aria-hidden="true">
