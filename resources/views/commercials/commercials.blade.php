@@ -8,31 +8,14 @@
                 <div class="col-sm-2">
                     <h3>Commercials</h3>
                 </div>
-                <div class="col-md-6">
-                    <form class="needs-validation" novalidate action="" method="get">
-                        @csrf
-                        <div class="form-group row">
-                            <div class="col-md-12">
-                                <div class="input-group">
-                                    <input type="text" required class="form-control p-2" id="" placeholder="Type to search in programs">
-                                    <div class="input-group-prepend">
-                                        <button type="submit" class="btn input-group-text p-2"><i class="mdi mdi-magnify"></i></button>
-                                    </div>
-                                    <div class="invalid-feedback">
-                                        Search by program name
-                                    </div>
-                                </div>
-                            </div>
-                        </div>
-                    </form>
-                </div>
-
-                <div class="col-md-4 text-right">
+                <div class="col-md-10 text-right">
                     <a href="{{route('commercials.create')}}" class="btn btn-primary p-2  waves-effect waves-light"  role="button" >
                         <i class="mdi mdi-plus-circle mr-1"></i> Add Commercial
                     </a>
                 </div>
             </div>
+            <div class="page-header-tab mb-1"></div>
+
             <div class="modal fade bs-example-modal-sm" tabindex="-1" role="dialog" aria-labelledby="mySmallModalLabel" aria-hidden="true">
                 <div class="modal-dialog">
                     <form action="{{route('commercials.store')}}" enctype="multipart/form-data" method="post" class="needs-validation" novalidate>
@@ -105,184 +88,98 @@
                     </form>
                 </div><!-- /.modal-dialog -->
             </div><!-- /.modal -->
-            @if(empty($commercials))
-                <div class="col-md-12 text-center">
-                    <a href="{{route('all-commercials')}}">Get all Commercials</a>
-                </div>
-            @endif
-            @if(empty($commercials))
-                <div class="row">
-                    <div class="col-xl-4">
-                        <div class="card">
-                            <div class="card-body">
-                                <div class="row">
-                                    <div class="col-md-6">
-                                        <h4 class="mt-0 header-title mb-4">In Queue</h4>
+            <div class="row">
+                <div class="col-md-8 offset-md-2">
+                    <h6 class="text-danger text-center">You Can filter between Dates</h6>
+                    <form class="needs-validation" novalidate action="{{route('all-commercials')}}" method="get">
+                        <div class="form-group row">
+                            {{--<div class="col-md-12">
+                                <div class="input-group">
+                                    <input type="date" required class="form-control p-2" id="" placeholder="Type to search in programs">
+                                    <div class="input-group-prepend">
+                                        <button type="submit" class="btn input-group-text p-2"><i class="mdi mdi-magnify"></i></button>
                                     </div>
-                                    <div class="col-md-6 text-right">
-                                        <a href="#" class="text-decoration-none text-dark font-20"><i class="mdi mdi-refresh"></i></a>
+                                    <div class="invalid-feedback">
+                                        Search by program name
                                     </div>
                                 </div>
-                                <div class="table-responsive">
-                                    <table id="" class="table table-hover">
-                                        <thead>
-                                        <tr>
-                                            <th scope="col">Name</th>
-                                            <th scope="col">Time</th>
-                                        </tr>
-                                        </thead>
-                                        <tbody>
-                                        {{--     @php($i =1)
-                                             @foreach($agencies as $customer)
-                                                 <tr>
-                                                     <td>
-                                                         <div class="custom-control custom-checkbox">
-                                                             <input type="checkbox" value="{{$customer->id}}" name="customer_ids[]" class="custom-control-input checkCustomerItem" id="check{{$customer->id}}">
-                                                             <label class="custom-control-label" for="check{{$customer->id}}"></label>
-                                                         </div>
-                                                     </td>
-                                                     <td>{{$i}}</td>
-                                                     <td>{{$customer->name}}</td>
-                                                     <td>{{$customer->email}}</td>
-                                                     <td>{{$customer->phone_number}}</td>
-                                                     <td>{{$customer->company}}</td>
-                                                     <td>{{$customer->id}}</td>
-                                                     <td>
-                                                         <a href="#" class="btn edit-customer"> <i class="mdi mdi-pencil"></i> </a>
-                                                     </td>
-                                                 @php($i++)
-                                             @endforeach--}}
-                                        </tbody>
-                                    </table>
+                            </div>--}}
+
+                            <div class="col-md-4">
+                                <div class="input-group date"  id="datetimepicker6" data-target-input="nearest">
+                                    <div class="input-group" data-target="#datetimepicker6" data-toggle="datetimepicker">
+                                        <label for="">From</label>
+                                        <input type="text" name="from" required class="form-control datetimepicker-input" data-target="#datetimepicker6"/>
+                                        <div class="input-group-addon input-group-append"><i class="mdi mdi-clock input-group-text"></i></div>
+                                    </div>
                                 </div>
                             </div>
-                        </div>
-                    </div>
-                    <div class="col-xl-8">
-                        <div class="card">
-                            <form action="">
-                                <div class="card-body">
-                                    <div class="row">
-                                        <div class="col-md-6">
-                                            <h4 class="mt-0 header-title mb-4">Recent Schedules</h4>
-                                        </div>
-                                        <div class="col-md-6 text-right">
-                                            <button class="btn btn-danger" type="submit" id="btn-delete-customers" disabled><i class="mdi mdi-trash-can-outline"></i> Delete</button>
-                                        </div>
+                            <div class="col-md-4">
+                                <div class="input-group date"  id="datetimepicker7" data-target-input="nearest">
+                                    <div class="input-group" data-target="#datetimepicker7" data-toggle="datetimepicker">
+                                        <label for="">To</label>
+                                        <input required type="text" name="to" class="form-control datetimepicker-input" data-target="#datetimepicker7"/>
+                                        <div class="input-group-addon input-group-append"><i class="mdi mdi-clock input-group-text"></i></div>
                                     </div>
-                                    <table id="tbl-recent-schedules" class="table table-hover">
-                                        <thead>
-                                        <tr>
-                                            <th scope="col">
-                                                <div class="custom-control custom-checkbox">
-                                                    <input type="checkbox" class="custom-control-input" id="checkAllItems">
-                                                    <label class="custom-control-label" for="checkAllItems"></label>
-                                                </div>
-                                            </th>
-                                            <th scope="col">#</th>
-                                            <th scope="col">Name</th>
-                                            <th scope="col">Audio File</th>
-                                            <th scope="col">Schedule Date</th>
-                                            {{--<th scope="col">Date Played</th>--}}
-                                            <th scope="col">ID</th>
-                                            <th scope="col">Action</th>
-                                        </tr>
-                                        </thead>
-                                        <tbody>
-                                        @php($i =1)
-                                      {{--  @foreach($recent_schedules as $commercial)
-                                            <tr>
-                                                <td>
-                                                    <div class="custom-control custom-checkbox">
-                                                        <input type="checkbox" value="{{$commercial->id}}" name="commercial_ids[]" class="custom-control-input checkCommercialItem" id="check{{$commercial->id}}">
-                                                        <label class="custom-control-label" for="check{{$commercial->id}}"></label>
-                                                    </div>
-                                                </td>
-                                                <td>{{$i}}</td>
-                                                <td>{{$commercial->name}}</td>
-                                                <td>
-                                                    <audio controls>
-                                                        <source src="{{asset('public/audio_files/'.$commercial->audio_file)}}" type="audio/mp3">
-                                                        Your browser does not support the audio element.
-                                                    </audio>
-                                                </td>
-                                                <td>{{$commercial->schedule_date}}</td>
-                                                --}}{{--<td>{{$commercial->date_played}}</td>--}}{{--
-                                                <td>{{$commercial->id}}</td>
-                                                <td>
-                                                    <a href="#" class="btn edit-customer"> <i class="mdi mdi-pencil"></i> </a>
-                                                </td>
-                                            @php($i++)
-                                        @endforeach--}}
-                                        </tbody>
-                                    </table>
                                 </div>
-                            </form>
+                            </div>
+                            <div class="col-md-4">
+                                <button class="btn btn-sm btn-danger">Filter</button>
+                            </div>
                         </div>
-                    </div>
+                    </form>
                 </div>
-            @endif
+                {{--<div class="col-md-4">
+                    <a href="{{route('all-commercials')}}">All Commercials</a>
+                </div>--}}
+            </div>
             @if(!empty($commercials))
                 <div class="row">
-                    <div class="col-xl-10 offset-md-1">
+                    <div class="col-xl-12">
                         <div class="card">
-                            <form action="{{route('delete-customers')}}" onsubmit="return confirm('Please Confirm Delete')">
+                            <form action="" onsubmit="return confirm('Please Confirm Delete')">
                                 @csrf
                                 <div class="card-body">
                                     <div class="row">
                                         <div class="col-md-4">
                                             <h4 class="mt-0 header-title mb-4">All Commercials</h4>
                                         </div>
-                                        <div class="col-md-8 text-right">
-
-                                            <button class="btn btn-danger" type="submit" id="btn-delete-customers" disabled><i class="mdi mdi-trash-can-outline"></i> Delete</button>
-
-                                        </div>
                                     </div>
                                     <div class="table-responsive">
-                                        <table id="customers_table" class="table table-hover">
+                                        <table id="commercials_table" class="table table-hover">
                                             <thead>
                                             <tr>
-                                                <th scope="col">
-                                                    <div class="custom-control custom-checkbox">
-                                                        <input type="checkbox" class="custom-control-input" id="checkAllItems">
-                                                        <label class="custom-control-label" for="checkAllItems"></label>
-                                                    </div>
-                                                </th>
                                                 <th scope="col">#</th>
-                                                <th scope="col">Name</th>
+                                                <th scope="col">Agency</th>
+                                                <th scope="col">Order #</th>
                                                 <th scope="col">Audio File</th>
-                                                <th scope="col">Schedule Date</th>
-                                                <th scope="col">Date Played</th>
-                                                <th scope="col">ID</th>
-                                                <th scope="col">Action</th>
+                                                <th scope="col">Program</th>
+                                                <th scope="col">Date/Time</th>
+                                                <th>Station</th>
                                             </tr>
                                             </thead>
                                             <tbody>
                                             @php($i =1)
                                             @foreach($commercials as $commercial)
                                                 <tr>
-                                                    <td>
-                                                        <div class="custom-control custom-checkbox">
-                                                            <input type="checkbox" value="{{$commercial->id}}" name="commercial_ids[]" class="custom-control-input checkCommercialItem" id="check{{$commercial->id}}">
-                                                            <label class="custom-control-label" for="check{{$commercial->id}}"></label>
-                                                        </div>
-                                                    </td>
                                                     <td>{{$i}}</td>
-                                                    <td>{{$commercial->name}}</td>
-                                                    <td>Audio File</td>
-                                                    <td>{{$commercial->schedule_date}}</td>
-                                                    <td>{{$commercial->date_played}}</td>
-                                                    <td>{{$commercial->id}}</td>
+                                                    <td>{{$commercial->agency->agency_name}}</td>
+                                                    <td>{{$commercial->order->order_number}}</td>
                                                     <td>
-                                                        <a href="#" class="btn edit-customer"> <i class="mdi mdi-pencil"></i> </a>
+                                                        <audio style=" padding: 0" controls>
+                                                            <source src="{{asset('public/audio_files/'.$commercial->advert->audio_file)}}" type="audio/mp3">
+                                                            Your browser does not support the audio element.
+                                                        </audio>
                                                     </td>
+                                                    <td>{{$commercial->program->program_name}}</td>
+                                                    <td>{{$commercial->date." ".$commercial->time}}</td>
+                                                    <td>{{$commercial->radio_station->name}}</td>
+
                                                 @php($i++)
                                             @endforeach
                                             </tbody>
                                         </table>
                                     </div>
-
                                 </div>
                             </form>
                         </div>

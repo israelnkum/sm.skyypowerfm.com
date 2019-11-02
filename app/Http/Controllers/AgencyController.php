@@ -27,10 +27,29 @@ class AgencyController extends Controller
     }
 
     public function all_agencies(){
-        $agencies = Agency::with('radio_station')->get();
+        if (Auth::user()->role =="Admin"){
+            $agencies = Agency::with('radio_station')->get();
+        }else{
+            $agencies = Agency::with('radio_station')
+                ->where('radio_station_id',Auth::user()->radio_station_id)->get();
+        }
         $radio_stations = RadioStation::all();
         return view('agencies.agencies',compact('agencies','radio_stations'));
     }
+
+
+
+    public function search_agencies(Request $request){
+        $agencies = Agency::with('radio_station')
+            ->where('agency_name', 'like', '%' . $request->input("search") . '%')
+            ->orWhere('phone_number', 'like', '%' . $request->input("search") . '%')
+            ->orWhere('contact_person', 'like', '%' . $request->input("search") . '%')
+            ->where('radio_station_id',Auth::user()->radio_station_id)
+            ->orWhere('email', 'like', '%' . $request->input("search") . '%')->get();
+        $radio_stations = RadioStation::all();
+        return view('agencies.agencies',compact('agencies','radio_stations'));
+    }
+
 
 
     public function delete_agencies(Request $request){
@@ -89,7 +108,7 @@ class AgencyController extends Controller
             $agency->contact_person = $request->input('contact_person');
             $agency->save();*/
             DB::commit();
-        toastr()->success('Agency Added');
+            toastr()->success('Agency Added');
         }catch(\Exception $exception){
             DB::rollBack();
 

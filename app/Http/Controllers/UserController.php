@@ -47,8 +47,11 @@ class UserController extends Controller
      */
     public function store(Request $request)
     {
+
+        $radio = RadioStation::find($request->radio_station_id);
         $user = new User();
-        $user->radio_station_id = $request->input('radio_station_id');
+        $user->radio_station_id = $radio->id;
+        $user->radio_name = $radio->name;
         $user->name = $request->input('name');
         $user->username = $request->input('username');
         $user->email = $request->input('email');
@@ -115,8 +118,10 @@ class UserController extends Controller
      */
     public function update(Request $request, $id)
     {
+        $radio = RadioStation::find($request->radio_station_id);
         $user =User::find($id);
-        $user->radio_station_id = $request->input('radio_station_id');
+        $user->radio_station_id = $radio->id;
+        $user->radio_name = $radio->name;
         $user->name = $request->input('name');
         $user->email = $request->input('email');
         $user->phone_number = $request->input('phone_number');

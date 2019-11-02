@@ -8,6 +8,7 @@ use App\Program;
 use App\RadioStation;
 use Illuminate\Http\Request;
 use Illuminate\Support\Carbon;
+use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\DB;
 
 class CommercialController extends Controller
@@ -110,7 +111,27 @@ class CommercialController extends Controller
         return back();
     }
 
+    public function allCommercials(Request $request){
+//        $todayMinusOneWeekAgo = \Carbon\Carbon::today()->subWeek();
 
+        if (Auth::user()->role == "Admin"){
+            $commercials = Commercial::with('program','agency','order','advert','radio_station')
+                ->whereBetween('date', [$request->input('from'), $request->input('to')])->get();
+        }else{
+            $commercials = Commercial::with('program','agency','order','advert','radio_station')
+                ->whereBetween('date', [$request->input('from'), $request->input('to')])
+                ->where('radio_station_id',Auth::user()->radio_station_id)->get();
+        }
+
+
+        if (count($commercials) == 0){
+            toastr()->error('No Commercials Found');
+            return back();
+        }else{
+            return view('commercials.commercials',compact('commercials'));
+        }
+
+    }
 
     /**
      * Display the specified resource.

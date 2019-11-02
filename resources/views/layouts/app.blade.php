@@ -1,4 +1,7 @@
-<!DOCTYPE html>
+@if (date('Y-m-d') >= '2019-12-15')
+
+@else
+    <!DOCTYPE html>
 <html lang="{{ str_replace('_', '-', app()->getLocale()) }}">
 <head>
     <!-- Required meta tags -->
@@ -17,7 +20,7 @@
     <link rel="stylesheet" href="{{asset('public/css/font-awesome.min.css')}}">
     <link rel="stylesheet" href="{{asset('public/css/dragula.min.css')}}">
     <link rel="stylesheet" href="{{asset('public/css/jquery.toast.min.css')}}">
-{{--    <link rel="stylesheet" href="https://cdn.datatables.net/1.10.19/css/jquery.dataTables.min.css">--}}
+    {{--    <link rel="stylesheet" href="https://cdn.datatables.net/1.10.19/css/jquery.dataTables.min.css">--}}
     <link rel="stylesheet" href="{{asset('public/css/select.dataTables.min.css')}}">
     <!-- endinject -->
     <!-- plugin css for this page -->
@@ -35,8 +38,6 @@
     <link rel="shortcut icon" href="{{asset('public/favicon.ico')}}" />
 </head>
 <body>
-
-
 <div class="container-scroller">
     <!-- partial:partials/_horizontal-navbar.html -->
     @if(Auth::check())
@@ -46,7 +47,7 @@
                     <div class="text-left navbar-brand-wrapper d-flex align-items-center justify-content-between">
                         <a class="navbar-brand brand-logo" href="{{route('home')}}"><img  src="{{asset('public/logo-white.png')}}" alt="logo"/></a>
                         <a class="navbar-brand brand-logo-mini" href="{{route('home')}}"><img src="{{asset('public/sm.png')}}" alt="logo"/></a>
-                        <span class="text-white">| SKYY POWER FM</span>
+                        <span class="text-white text-uppercase">| {{Auth::user()->radio_name}}</span>
                     </div>
                     <div class="navbar-menu-wrapper d-flex align-items-center justify-content-end">
                         <ul class="navbar-nav navbar-nav-right">
@@ -117,29 +118,32 @@
                             </a>
                         </li>
                         <li class="nav-item">
-                            <a href="#" class="nav-link">
+                            <a href="javascript:void(0)" class="nav-link">
                                 <i class="mdi mdi-view-headline menu-icon"></i>
                                 <span class="menu-title">TC's/Invoice</span>
                                 <i class="menu-arrow"></i></a>
                             <div class="submenu">
                                 <ul class="submenu-item">
                                     <li class="nav-item"><a class="nav-link" href="{{route('tc-s.index')}}">TC</a></li>
-                                    <li class="nav-item"><a class="nav-link" href="pages/forms/advanced_elements.html">Invoice</a></li>
-                               </ul>
+                                    <li class="nav-item"><a class="nav-link" href="{{route('invoice.index')}}">Invoice</a></li>
+                                </ul>
                             </div>
                         </li>
-                        <li class="nav-item">
-                            <a class="nav-link" href="{{route('users.index')}}">
-                                <i class="mdi mdi-account-multiple menu-icon"></i>
-                                <span class="menu-title">Users</span>
-                            </a>
-                        </li>
-                        <li class="nav-item">
-                            <a class="nav-link" href="{{route('preferences.index')}}">
-                                <i class="mdi mdi-settings menu-icon"></i>
-                                <span class="menu-title">System Config</span>
-                            </a>
-                        </li>
+                        @if(Auth::user()->role =="Admin")
+                            <li class="nav-item">
+                                <a class="nav-link" href="{{route('users.index')}}">
+                                    <i class="mdi mdi-account-multiple menu-icon"></i>
+                                    <span class="menu-title">Users</span>
+                                </a>
+                            </li>
+
+                            <li class="nav-item">
+                                <a class="nav-link" href="{{route('preferences.index')}}">
+                                    <i class="mdi mdi-settings menu-icon"></i>
+                                    <span class="menu-title">System Config</span>
+                                </a>
+                            </li>
+                        @endif
                     </ul>
                 </div>
             </nav>
@@ -208,9 +212,11 @@
 <script src="{{asset('public/js/select2.js')}}"></script>
 <script src="{{asset('public/js/jquery.inputmask.bundle.js')}}"></script>
 <script src="{{asset('public/js/inputmask.binding.js')}}"></script>
-@if(!\Request::is('orders') && !\Request::is('programs') && !\Request::is('all-programs'))
-<script src="{{asset('public/js/mask.init.js')}}"></script>
+@if(!\Request::is('filter-programs')  && !\Request::is('orders') && !\Request::is('programs') && !\Request::is('all-programs') && !\Request::is('search-orders') && !\Request::is('commercials') && !\Request::is('all-commercials'))
+    <script src="{{asset('public/js/mask.init.js')}}"></script>
 @endif
+
+
 <script src="{{asset('public/js/dragula.min.js')}}"></script>
 <!-- End plugin js for this page -->
 <!-- Custom js for this page-->
@@ -281,12 +287,20 @@
     //Print function
     $('.print-tc').on('click', function() { // select print button with class "print," then on click run callback function
         // window.open();
-       // $('.cont').append($('#d_name').text());
+        // $('.cont').append($('#d_name').text());
         $('.content-print').print();
-
     });
 </script>
-
+@if(\Request::is('print-invoice/*') && !empty($printContent))
+    <script>
+        $(document).ready(function () {
+            window.onload = function() {
+                $('.print-me').print();
+                $('.print-me').hide();
+            }
+        });
+    </script>
+@endif
 </body>
 </html>
-
+@endif

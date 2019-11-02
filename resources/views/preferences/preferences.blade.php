@@ -94,7 +94,6 @@
                                                         <form action="{{route('delete-radio-stations')}}" method="post" onsubmit="return confirm('NOTE:\nEvery Agency, Advert, Programs etc.\nassociated with this station will also be deleted! \nPlease Confirm Delete.')">
                                                             @csrf
                                                             <input type="hidden" class="form-control" name="selected_radio_stations" id="selected_radio_stations">
-
                                                             <div class="d-flex flex-wrap justify-content-between">
                                                                 <h4 class="card-title">Radio Stations</h4>
                                                                 <div class="dropdown dropleft card-menu-dropdown">
@@ -163,7 +162,7 @@
                                     </div>
                                     <div class="tab-pane fade" id="tax" role="tabpanel" aria-labelledby="profile-tab">
                                         <div class="row">
-                                            <div class="col-md-6">
+                                            {{--<div class="col-md-6">
                                                 <form class="repeater needs-validation" novalidate method="post" action="{{route('taxes.store')}}">
                                                     @csrf
                                                     <div data-repeater-list="taxes">
@@ -203,26 +202,27 @@
                                                     </div>
                                                     <button class="btn btn-primary" type="submit">Save</button>
                                                 </form>
-                                                {{--                                                <p id="demo">d</p>--}}
-                                            </div>
-                                            <div class="col-md-6 grid-margin">
+                                                --}}{{--                                                <p id="demo">d</p>--}}{{--
+                                            </div>--}}
+                                            <div class="col-md-12 col-xl-12 grid-margin stretch-card">
                                                 <div class="card">
                                                     <div class="card-body">
-                                                        <form id="delete-tax-form">
-                                                            <div class="d-flex flex-wrap justify-content-between">
-                                                                <h4 class="card-title">All Taxes</h4>
-                                                                <div class="dropdown dropleft card-menu-dropdown">
-                                                                    <button disabled id="btn-delete-tax" class="btn btn-link text-danger text-decoration-none text-right" type="submit">Delete</button>
+                                                        <div class="table-responsive">
+                                                            <form id="delete-tax-form">
+                                                                <div class="d-flex flex-wrap justify-content-between">
+                                                                    <h4 class="card-title">All Taxes</h4>
+                                                                    <div class="dropdown dropleft card-menu-dropdown">
+                                                                        <button disabled id="btn-delete-tax" class="btn btn-link text-danger text-decoration-none text-right" type="submit">Delete</button>
 
-                                                                    <button class="btn p-0" type="button" id="dropdown12" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
-                                                                        <i class="mdi mdi-dots-vertical card-menu-btn"></i>
-                                                                    </button>
-                                                                    <div class="dropdown-menu" aria-labelledby="dropdown12" x-placement="left-start">
-                                                                        <a class="dropdown-item" href="#">Export</a>
+                                                                        <button class="btn p-0" type="button" id="dropdown12" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
+                                                                            <i class="mdi mdi-dots-vertical card-menu-btn"></i>
+                                                                        </button>
+                                                                        <div class="dropdown-menu" aria-labelledby="dropdown12" x-placement="left-start">
+                                                                            <a class="dropdown-item" href="#">Export</a>
+                                                                        </div>
                                                                     </div>
                                                                 </div>
-                                                            </div>
-                                                            <div class="table-responsive">
+
                                                                 <table class="table " id="taxes-table">
                                                                     <thead>
                                                                     <tr>
@@ -235,8 +235,6 @@
                                                                     </tr>
                                                                     </thead>
                                                                     <tbody>
-
-                                                                    {{--                                                            <button type="button" class="btn btn-success btn-fw" onclick="showSuccessToast()">Success</button>--}}
                                                                     @php($i = 1)
                                                                     @foreach($taxes as $tax)
                                                                         <tr>
@@ -255,8 +253,8 @@
                                                                     @endforeach
                                                                     </tbody>
                                                                 </table>
-                                                            </div>
-                                                        </form>
+                                                            </form>
+                                                        </div>
                                                     </div>
                                                 </div>
                                             </div>
@@ -294,7 +292,7 @@
                         <div class="form-group row">
                             <div class="col-md-12">
                                 <label for="edit-tax-name">Tax Name:</label>
-                                <input type="text" name="tax_name" required class="form-control p-2" id="edit-tax-name">
+                                <input type="text" readonly name="tax_name" required class="form-control p-2" id="edit-tax-name">
                                 <div class="invalid-feedback">
                                     Name required
                                 </div>

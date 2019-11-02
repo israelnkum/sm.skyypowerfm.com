@@ -3737,7 +3737,7 @@
                 }
             },
             currency: {
-                prefix: "$ ",
+                prefix: " ",
                 groupSeparator: ",",
                 alias: "numeric",
                 placeholder: "0",

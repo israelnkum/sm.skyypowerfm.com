@@ -6,6 +6,8 @@ use App\Advert;
 use App\Agency;
 use App\Order;
 use App\RadioStation;
+use App\TransmissionCertificate;
+use App\User;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\DB;
@@ -25,11 +27,21 @@ class OrderController extends Controller
     {
         $agencies = Agency::all();
         $adverts = Advert::all();
-        $orders = Order::with('radio_station','agency','advert')
-            ->get();
+        $users = User::all();
+        $todayMinusOneWeekAgo = \Carbon\Carbon::today()->subWeek();
+        if (Auth::user()->role == "Admin"){
+            $orders = Order::with('radio_station','agency','advert')
+                ->where('received_date','>=',substr($todayMinusOneWeekAgo,0,10))
+                ->get()->groupBy('order_number');
+        }else{
+            $orders = Order::with('radio_station','agency','advert')
+                ->where('radio_station_id',Auth::user()->radio_station_id)
+                ->where('received_date','>=',substr($todayMinusOneWeekAgo,0,10))
+                ->get()->groupBy('order_number');
+        }
 
         $radio_stations = RadioStation::all();
-        return view('orders.orders',compact('orders','agencies','adverts','radio_stations'));
+        return view('orders.orders',compact('orders','users','agencies','adverts','radio_stations'));
     }
 
     public function filterAdverts(Request $request){
@@ -44,6 +56,33 @@ class OrderController extends Controller
         if ($request->ajax()){
             $data = Agency::where('radio_station_id',$request->id)->get();
             echo json_encode($data);
+        }
+    }
+
+
+    public function searchOrders(Request $request){
+        $agencies = Agency::all();
+        $adverts = Advert::all();
+        $users = User::all();
+
+        $radio_stations = RadioStation::all();
+
+        if (Auth::user()->role == "Admin"){
+            $orders = Order::with('agency','advert','radio_station')
+                ->whereBetween('received_date', [$request->input('from'), $request->input('to')])
+                ->get()->groupBy('order_number');
+        }else{
+            $orders = Order::with('agency','advert','radio_station')
+                ->whereBetween('received_date', [$request->input('from'), $request->input('to')])
+                ->where('radio_station_id',Auth::user()->radio_station_id)
+                ->get()->groupBy('order_number');
+        }
+        if (count($orders) == 0){
+            toastr()->error('No Orders Found');
+            return back();
+        }else{
+            return view('orders.orders',compact('orders','users','agencies','adverts','radio_stations'));
+
         }
     }
 
@@ -100,7 +139,7 @@ class OrderController extends Controller
                 $order->order_number = $order_number;
                 $order->agency_id = $request->input('agency_id');
                 $order->advert_id = $request->input('advert_id')[$i];
-                $order->received_date = str_replace('/','-',$request->input('received_date'));
+                $order->received_date = $request->input('received_date');
                 $order->start_date = $request->input('start_date');
                 $order->end_date = $request->input('end_date');
                 $order->user_id = Auth::user()->id;
@@ -170,7 +209,16 @@ class OrderController extends Controller
      * @return \Illuminate\Http\Response
      */
     public function destroy($id)
-    {
-        //
+    {$checkTc = TransmissionCertificate::where('advert_id', $id)->first();
+
+        if (!empty($checkTc)){
+            toastr()->warning('Advert cannot be deleted because it has been played');
+            return back();
+        }else{
+            $order =  Order::where('advert_id', $id)->first();
+            $order->delete();
+            toastr()->success('Order Deleted');
+            return back();
+        }
     }
 }

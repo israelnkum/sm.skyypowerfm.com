@@ -13,12 +13,12 @@
                         <div class="form-group row mb-1">
                             <div class="col-md-12">
                                 <div class="input-group">
-                                    <input name="search" type="text" required class="form-control p-2" id="" placeholder="Search Program Name">
+                                    <input name="search" type="text" required class="form-control p-2" id="" placeholder="Search Program Name | Day">
                                     <div class="input-group-prepend">
                                         <button type="submit" class="btn input-group-text p-2"><i class="mdi mdi-magnify"></i></button>
                                     </div>
                                     <div class="invalid-feedback">
-                                        Search by program name
+                                        Search by program name or day
                                     </div>
                                 </div>
                             </div>
@@ -78,7 +78,13 @@
                                                 <select class="form-control js-example-basic-single p-0" style="width: 100%" name="radio_station_id" required>
                                                     <option value="">Radio Station</option>
                                                     @foreach($radio_stations as $radio_station)
-                                                        <option value="{{$radio_station->id}}">{{$radio_station->name}}</option>
+                                                        @if(Auth::user()->role =="Admin")
+                                                            <option value="{{$radio_station->id}}">{{$radio_station->name}}</option>
+                                                        @else
+                                                            @if(Auth::user()->radio_station_id == $radio_station->id)
+                                                                <option selected value="{{$radio_station->id}}">{{$radio_station->name}}</option>
+                                                            @endif
+                                                        @endif
                                                     @endforeach
                                                 </select>
                                                 <div class="invalid-feedback">
@@ -204,16 +210,19 @@
                                     <div class="col-md-4">
                                         <h4 class="mt-0 header-title mb-4">All programs</h4>
                                     </div>
-                                    <div class="col-md-2 offset-md-6">
-                                        <form action="{{route('filter-programs')}}" method="get" id="filter-programs-form">
-                                            <select class="form-control filter-items" name="filter_programs" id="filter-programs">
-                                                <option value="">Filter</option>
-                                                @foreach($radio_stations as $radio)
-                                                    <option value="{{$radio->id}}">{{$radio->name}}</option>
-                                                @endforeach
-                                            </select>
-                                        </form>
-                                    </div>
+                                    @if(Auth::user()->role =="Admin")
+                                        <div class="col-md-2 offset-md-6">
+                                            <form action="{{route('filter-programs')}}" method="get" id="filter-programs-form">
+                                                <select class="form-control filter-items" name="filter_programs" id="filter-programs">
+                                                    <option value="">Filter</option>
+                                                    @foreach($radio_stations as $radio)
+                                                        <option value="{{$radio->id}}">{{$radio->name}}</option>
+                                                    @endforeach
+                                                </select>
+                                            </form>
+                                        </div>
+
+                                    @endif
                                 </div>
                                 <div class="accordion accordion-bordered" id="all-programs-accordion" role="tablist">
                                     @php($i=1)
@@ -223,7 +232,6 @@
                                                 <div class="d-flex justify-content-between p-0 align-items-center">
                                                     <a data-toggle="collapse" href="#group-{{$i}}" aria-expanded="false" aria-controls="collapse-4">
                                                         {{$group}}
-
                                                     </a>
                                                     {{--Delete whole program for all days--}}
                                                     <form class="p-0" onsubmit="return confirm('NOTE:\n All Commercials Under this program will also be deleted\n Please Confirm Delete!')" action="{{route('delete-programs')}}" method="post">

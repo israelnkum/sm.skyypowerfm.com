@@ -21,6 +21,10 @@ class RadioStation extends Model
         return $this->hasMany('App\Program');
     }
 
+    public function invoice(){
+        return $this->hasMany('App\Program');
+    }
+
     protected $fillable = [
         'name','address','location','phone_number','fax','ad_prefix','signature','logo','user_id'
     ];

@@ -80,7 +80,7 @@
                     </div>
                 @endif
                 @if(!empty($selected_agency))
-                    <div class="col-md-8">
+                    <div class="col-md-8 pl-0">
                         <div class="card px-2">
                             <div class="card-body">
                                 <div class="content-print">
@@ -111,8 +111,9 @@
                                             <p> <b>Time:</b> {{date('h:i:s')}}</p>
                                         </div>
                                         <div class="col-md-8 text-right mt-3">
-                                            <h6 class=""><b>Agency:</b> {{$selected_agency->agency_name}}</h6>
+                                            <h6 class="font-weight-normal"><b>Agency:</b> {{$selected_agency->agency_name}}</h6>
                                             @foreach($tcs as $tc)@endforeach
+                                            <h6 class="font-weight-normal"><b>Order Number: </b> {{$tc[0]->order_number}}</h6>
                                         </div>
 
                                     </div>
@@ -170,12 +171,12 @@
                                 </div>
                                 <div class="container w-100">
                                     <div class="row mt-4">
-                                        <div class="col-md-10 p-0 text-right ">
+                                  {{--      <div class="col-md-10 p-0 text-right ">
                                             <form action="" class="mr-0">
                                                 <button class="btn btn-sm btn-success mr-0" title="Save"><i class="mdi mdi-content-save"></i></button>
                                             </form>
-                                        </div>
-                                        <div class="col-md-2 text-left ml-0 p-0">
+                                        </div>--}}
+                                        <div class="col-md-12 text-right ml-0 p-0">
                                             <a href="javascript:void(0)" class="btn btn-sm btn-primary print-tc ml-0" title="Print"><i class="mdi mdi-printer mr-1"></i></a>
                                         </div>
                                     </div>

@@ -8,17 +8,17 @@
                     <h3>Advertisement</h3>
                 </div>
                 <div class="col-md-6">
-                    <form class="needs-validation" novalidate action="" method="get">
+                    <form class="needs-validation" novalidate action="{{route('search-adverts')}}" method="get">
                         @csrf
                         <div class="form-group row mb-1">
                             <div class="col-md-12">
                                 <div class="input-group">
-                                    <input type="text" required class="form-control p-2" id="" placeholder="Type to search in programs">
+                                    <input type="text" name="search" required class="form-control p-2" id="" placeholder="Search by Advert Name | Number">
                                     <div class="input-group-prepend">
                                         <button type="submit" class="btn input-group-text p-2"><i class="mdi mdi-magnify"></i></button>
                                     </div>
                                     <div class="invalid-feedback">
-                                        Search by program name
+                                        Search by advert name or number
                                     </div>
                                 </div>
                             </div>
@@ -27,6 +27,9 @@
                 </div>
 
                 <div class="col-md-4 text-right">
+                    @if(!empty($adverts))
+                        <a href="{{route('all-adverts')}}">All Adverts</a>
+                    @endif
                     <button class="btn btn-primary p-2 waves-effect waves-light"  data-toggle="modal" data-target=".bs-example-modal-sm" type="button" >
                         <i class="ti-user mr-1"></i> New Advert
                     </button>
@@ -59,8 +62,13 @@
                                                 <label for="customer_id">Radio Station</label>
                                                 <select required name="radio_station_id" style="width: 100%" class="form-control js-example-basic-single w-100" id="station-advert">
                                                     <option value=""></option>
-                                                    @foreach($radio_stations as $radio)
-                                                        <option value="{{$radio->id}}">{{$radio->name}}</option>
+                                                    @foreach($radio_stations as $radio_station)
+                                                        @if(Auth::user()->role =="Admin")
+                                                        @else
+                                                            @if(Auth::user()->radio_station_id == $radio_station->id)
+                                                                <option selected value="{{$radio_station->id}}">{{$radio_station->name}}</option>
+                                                            @endif
+                                                        @endif
                                                     @endforeach
                                                 </select>
                                                 <div class="invalid-feedback">
@@ -71,9 +79,9 @@
                                                 <label for="customer_id">Agency</label>
                                                 <select required name="agencies_id" class="form-control js-example-basic-single" style="width: 100%" id="agencies_id-advert">
                                                     <option value=""></option>
-                                                    {{-- @foreach($agencies as $agency)
+                                                    @foreach($agencies as $agency)
                                                         <option value="{{$agency->id}}">{{$agency->agency_name}}</option>
-                                                    @endforeach --}}
+                                                    @endforeach
                                                 </select>
                                                 <div class="invalid-feedback">
                                                     Agency required
@@ -123,7 +131,6 @@
                                         <table id="advert_table" class="table table-hover">
                                             <thead>
                                             <tr>
-                                                <th></th>
                                                 <th scope="col">ID</th>
                                                 <th scope="col">Name</th>
                                                 <th scope="col">AD. #</th>
@@ -138,30 +145,30 @@
                                             <tbody>
                                             @php($i =1)
                                             @foreach($adverts as $advert)
-                                                <tr>
-                                                    <td>
-                                                    </td>
-                                                    <td>{{$advert->id}}</td>
-                                                    <td>{{$advert->name}}</td>
-                                                    <td>{{$advert->advert_number}}</td>
-                                                    <td>{{$advert->agency_id}}</td>
-                                                    <td>{{$advert->agency->agency_name}}</td>
-                                                    <td>
-                                                        @if($advert->audio_file == "Upload file")
-                                                            Upload File
-                                                        @else
-                                                            <audio controls>
-                                                                <source src="{{asset('public/audio_files/'.$advert->audio_file)}}" type="audio/mp3">
-                                                                Your browser does not support the audio element.
-                                                            </audio>
-                                                        @endif
-                                                    </td>
-                                                    <td>{{$advert->radio_station->id}}</td>
-                                                    <td>{{$advert->radio_station->name}}</td>
-                                                    <td>
-                                                        <a href="javascript:void(0)" class="btn edit-advert"> <i class="mdi mdi-pencil"></i> </a>
-                                                    </td>
-                                                </tr>
+                                                @if(Auth::user()->radio_station_id == $advert->radio_station_id)
+                                                    <tr>
+                                                        <td>{{$advert->id}}</td>
+                                                        <td>{{$advert->name}}</td>
+                                                        <td>{{$advert->advert_number}}</td>
+                                                        <td>{{$advert->agency_id}}</td>
+                                                        <td>{{$advert->agency->agency_name}}</td>
+                                                        <td>
+                                                            @if($advert->audio_file == "Upload file")
+                                                                Upload File
+                                                            @else
+                                                                <audio controls>
+                                                                    <source src="{{asset('public/audio_files/'.$advert->audio_file)}}" type="audio/mp3">
+                                                                    Your browser does not support the audio element.
+                                                                </audio>
+                                                            @endif
+                                                        </td>
+                                                        <td>{{$advert->radio_station->id}}</td>
+                                                        <td>{{$advert->radio_station->name}}</td>
+                                                        <td>
+                                                            <a href="javascript:void(0)" class="btn edit-advert"> <i class="mdi mdi-pencil"></i> </a>
+                                                        </td>
+                                                    </tr>
+                                                @endif
                                                 @php($i++)
                                             @endforeach
                                             </tbody>
@@ -178,7 +185,7 @@
 
     <div class="modal fade edit-advert-modal" tabindex="-1" role="dialog" aria-labelledby="mySmallModalLabel" aria-hidden="true">
         <div class="modal-dialog">
-            <form action="adverts" id="edit-advert-form" method="post" class="needs-validation" novalidate>
+            <form action="adverts" id="edit-advert-form" method="post" enctype="multipart/form-data" class="needs-validation" novalidate>
                 @csrf
                 {!! method_field('put') !!}
                 <div class="modal-content">
@@ -201,8 +208,14 @@
                                 <label for="customer_id">Radio Station</label>
                                 <select required name="radio_station_id" style="width: 100%" class="form-control js-example-basic-single w-100" id="edit-ad-station">
                                     <option value=""></option>
-                                    @foreach($radio_stations as $radio)
-                                        <option value="{{$radio->id}}">{{$radio->name}}</option>
+                                    @foreach($radio_stations as $radio_station)
+                                        @if(Auth::user()->role =="Admin")
+                                            <option value="{{$radio_station->id}}">{{$radio_station->name}}</option>
+                                        @else
+                                            @if(Auth::user()->radio_station_id == $radio_station->id)
+                                                <option selected value="{{$radio_station->id}}">{{$radio_station->name}}</option>
+                                            @endif
+                                        @endif
                                     @endforeach
                                 </select>
                                 <div class="invalid-feedback">
@@ -213,9 +226,15 @@
                                 <label for="customer_id">Agency</label>
                                 <select required name="agencies_id" class="form-control js-example-basic-single" style="width: 100%" id="edit-ad-agency">
                                     <option value=""></option>
-                                    {{-- @foreach($agencies as $agency)
-                                        <option value="{{$agency->id}}">{{$agency->agency_name}}</option>
-                                    @endforeach --}}
+                                    @foreach($agencies as $agency)
+                                        @if(Auth::user()->role =="Admin")
+                                            <option value="{{$agency->id}}">{{$agency->agency_name}}</option>
+                                        @else
+                                            @if(Auth::user()->radio_station_id == $agency->radio_station_id)
+                                                <option value="{{$agency->id}}">{{$agency->agency_name}}</option>
+                                            @endif
+                                        @endif
+                                    @endforeach
                                 </select>
                                 <div class="invalid-feedback">
                                     Agency required

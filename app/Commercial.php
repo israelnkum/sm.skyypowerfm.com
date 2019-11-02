@@ -19,4 +19,7 @@ class Commercial extends Model
     public function program(){
         return $this->belongsTo('App\Program');
     }
+    public function radio_station(){
+        return $this->belongsTo('App\RadioStation');
+    }
 }

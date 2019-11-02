@@ -8,12 +8,12 @@
                     <h3>Agencies</h3>
                 </div>
                 <div class="col-md-6">
-                    <form class="needs-validation" novalidate action="" method="get">
+                    <form class="needs-validation" novalidate action="{{route('search-agencies')}}" method="get">
                         @csrf
                         <div class="form-group row mb-1">
                             <div class="col-md-12">
                                 <div class="input-group">
-                                    <input type="text" required class="form-control p-2" id="" placeholder="Type to search in programs">
+                                    <input type="text" required class="form-control p-2" id="" name="search" placeholder="Search by Agency Name | Phone Number | Email | Contact Person">
                                     <div class="input-group-prepend">
                                         <button type="submit" class="btn input-group-text p-2"><i class="mdi mdi-magnify"></i></button>
                                     </div>
@@ -92,23 +92,30 @@
                                         </div>
                                         <div class="col-md-6">
                                             <label for="radio-station">Radio Station</label>
-                                            <select class="form-control p-1" name="radio_station_id" required id="radio-station">
+                                            <select class="form-control js-example-basic-single p-0" style="width: 100%" name="radio_station_id" required id="radio-station">
                                                 <option value="">Select Radio Station</option>
+
                                                 @foreach($radio_stations as $radio_station)
-                                                    <option value="{{$radio_station->id}}">{{$radio_station->name}}</option>
+                                                    @if(Auth::user()->role =="Admin")
+                                                        <option value="{{$radio_station->id}}">{{$radio_station->name}}</option>
+                                                    @else
+                                                        @if(Auth::user()->radio_station_id == $radio_station->id)
+                                                            <option selected value="{{$radio_station->id}}">{{$radio_station->name}}</option>
+                                                        @endif
+                                                    @endif
                                                 @endforeach
                                             </select>
                                             <div class="invalid-feedback">
                                                 Radio Station is required
                                             </div>
                                         </div>
-                                        <div class="col-md-6">
+                                        {{--<div class="col-md-6">
                                             <label for="radio-station">Discount</label>
                                             <input type="number" class="form-control" name="discount" id="discount" step="any" value="0" min="0">
                                             <div class="invalid-feedback">
                                                 Discount is required
                                             </div>
-                                        </div>
+                                        </div>--}}
                                     </div>
                                 </div>
                                 <div class="modal-footer">
@@ -255,23 +262,29 @@
                             </div>
                             <div class="col-md-6">
                                 <label for="radio-station">Radio Station</label>
-                                <select class="form-control p-1" name="radio_station_id" required id="edit-agency-radio-station">
+                                <select class="form-control p-1 js-example-basic-single" name="radio_station_id" required id="edit-agency-radio-station">
                                     <option value="">Select Radio Station</option>
                                     @foreach($radio_stations as $radio_station)
-                                        <option value="{{$radio_station->id}}">{{$radio_station->name}}</option>
+                                        @if(Auth::user()->role =="Admin")
+                                            <option value="{{$radio_station->id}}">{{$radio_station->name}}</option>
+                                        @else
+                                            @if(Auth::user()->radio_station_id == $radio_station->id)
+                                                <option selected value="{{$radio_station->id}}">{{$radio_station->name}}</option>
+                                            @endif
+                                        @endif
                                     @endforeach
                                 </select>
                                 <div class="invalid-feedback">
                                     Radio Station is required
                                 </div>
                             </div>
-                            <div class="col-md-6">
+                            {{--<div class="col-md-6">
                                 <label for="radio-station">Discount</label>
                                 <input type="number" class="form-control" name="discount" id="edit-agency-discount" step="any" value="0" min="0">
                                 <div class="invalid-feedback">
                                     Radio Station is required
                                 </div>
-                            </div>
+                            </div>--}}
                         </div>
                     </div>
                     <div class="modal-footer">

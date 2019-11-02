@@ -9,7 +9,7 @@ $(function(e) {
         $(".cc-inputmask").inputmask("9999 9999 9999 9999"),
         $(".ssn-inputmask").inputmask("999-99-9999"),
         $(".isbn-inputmask").inputmask("999-99-999-9999-9"),
-        $(".currency-inputmask").inputmask("$9999"),
+        $(".currency-inputmask").inputmask("9999"),
         // $(".vat").inputmask("9.#"),
         $(".percentage-inputmask").inputmask("99%"),
         $(".decimal-inputmask").inputmask({

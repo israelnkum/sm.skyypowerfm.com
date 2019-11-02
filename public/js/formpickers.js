@@ -19,7 +19,9 @@
         });
     }*/
 
-
+    $('#datetimepicker1').datetimepicker({
+        format: 'YYYY-MM-DD HH:mm',
+    });
     $('#datetimepicker6').datetimepicker({
         format: 'YYYY-MM-DD',
         // useCurrent: false
@@ -37,6 +39,23 @@
     });
 
 
+
+
+    $('#datetimepicker8').datetimepicker({
+        format: 'YYYY-MM-DD',
+        // useCurrent: false
+    });
+    $('#datetimepicker9').datetimepicker({
+        format: 'YYYY-MM-DD',
+        useCurrent: false,
+        autoclose: false
+    });
+    $("#datetimepicker8").on("change.datetimepicker", function (e) {
+        $('#datetimepicker9').datetimepicker('minDate', e.date);
+    });
+    $("#datetimepicker9").on("change.datetimepicker", function (e) {
+        $('#datetimepicker8').datetimepicker('maxDate', e.date);
+    });
 
     $('#start-time').datetimepicker({
         format:'LT'

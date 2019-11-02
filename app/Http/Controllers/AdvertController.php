@@ -5,6 +5,7 @@ namespace App\Http\Controllers;
 use App\Advert;
 use App\Agency;
 use App\RadioStation;
+use App\TransmissionCertificate;
 use Illuminate\Http\Request;
 use Illuminate\Http\Response;
 use Illuminate\Support\Facades\Auth;
@@ -24,20 +25,41 @@ class AdvertController extends Controller
      */
     public function index()
     {
-        $agencies = Agency::all();
+        if (Auth::user()->role == "Admin"){
+            $agencies = Agency::all();
+        }else{
+            $agencies = Agency::where('radio_station_id',Auth::user()->radio_station_id)->get();
+        }
         $recent_schedules = Advert::all();
         $radio_stations = RadioStation::all();
-
         return view('adverts.adverts',
             compact('agencies','recent_schedules','radio_stations'));
     }
 
     public function all_Adverts(){
-        $agencies = Agency::all();
-        $adverts = Advert::with('radio_station','agency')->get();
+
+        if (Auth::user()->role == "Admin"){
+            $adverts = Advert::with('radio_station','agency')->get();
+            $agencies = Agency::all();
+        }else{
+            $adverts = Advert::with('radio_station','agency')
+                ->where('radio_station_id',Auth::user()->radio_station_id)->get();
+            $agencies = Agency::where('radio_station_id',Auth::user()->radio_station_id)->get();
+        }
+
         $radio_stations = RadioStation::all();
 
-//        return $adverts;
+//
+        return view('adverts.adverts',compact('adverts','agencies','radio_stations'));
+    }
+
+    public function search_adverts(Request $request){
+        $agencies = Agency::all();
+        $adverts = Advert::with('radio_station')
+            ->where('name', 'like', '%' . $request->input("search") . '%')
+            ->where('radio_station_id',Auth::user()->radio_station_id)
+            ->orWhere('advert_number', 'like', '%' . $request->input("search") . '%')->get();
+        $radio_stations = RadioStation::all();
         return view('adverts.adverts',compact('adverts','agencies','radio_stations'));
     }
 
@@ -163,7 +185,31 @@ class AdvertController extends Controller
      */
     public function update(Request $request, $id)
     {
-        //
+        DB::beginTransaction();
+        try{
+            $advert = Advert::find($id);
+            $file = $request->file('audio_file');
+            if ($file != ''){
+                $fileName = $file->getClientOriginalName();
+                $file->move(public_path('audio_files'), $fileName);
+                $advert->audio_file = $fileName;
+            }
+
+
+            $advert->agency_id = $request->input('agencies_id');
+            $advert->radio_station_id = $request->input('radio_station_id');
+            $advert->name = $request->input('name');
+
+            $advert->user_id =Auth::user()->id;
+            $advert->save();
+
+            DB::commit();
+            toastr()->success('Advert Updated');
+        }catch(\Exception $exception){
+            DB::rollBack();
+            toastr()->warning('Something Went Wrong Please Try again');
+        }
+        return redirect()->route('adverts.index');
     }
 
     /**
@@ -174,6 +220,16 @@ class AdvertController extends Controller
      */
     public function destroy($id)
     {
-        //
+        $checkTc = TransmissionCertificate::where('advert_id', $id)->first();
+
+        if (!empty($checkTc)){
+            toastr()->warning('Advert cannot be deleted because TC has been generated');
+            return back();
+        }else{
+            $advert = Advert::find($id);
+            $advert->delete();
+            toastr()->success('Advert Deleted');
+            return back();
+        }
     }
 }

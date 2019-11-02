@@ -12,7 +12,11 @@
 */
 
 Route::get('/', function () {
-    return view('auth.login');
+  if (date('Y-m-d') >= '2019-12-15'){
+      return view('welcome1');
+  }else{
+      return view('auth.login');
+  }
 });
 
 Auth::routes();
@@ -25,7 +29,7 @@ Route::get('/home', 'HomeController@index')->name('home');
  * Commercials
  */
 Route::resource('commercials', 'CommercialController');
-Route::get('all-commercials', 'CommercialController@all_commercials')->name('all-commercials');
+Route::get('all-commercials', 'CommercialController@allCommercials')->name('all-commercials');
 Route::post('filter-programs', 'CommercialController@filterPrograms')->name('filter-programs');
 
 Route::resource('play-commercials', 'PlayCommercial');
@@ -35,6 +39,7 @@ Route::resource('play-commercials', 'PlayCommercial');
 Route::resource('agency', 'AgencyController');
 Route::get('all-agencies', 'AgencyController@all_agencies')->name('all-agencies');
 Route::get('delete-agencies', 'AgencyController@delete_agencies')->name('delete-agencies');
+Route::get('search-agencies', 'AgencyController@search_agencies')->name('search-agencies');
 
 
 
@@ -71,7 +76,7 @@ Route::get('search-users', 'UserController@search_users')->name('search-users');
 Route::resource('adverts', 'AdvertController');
 Route::get('all-adverts', 'AdvertController@all_adverts')->name('all-adverts');
 Route::get('delete-adverts', 'AdvertController@delete_advert')->name('delete-advert');
-
+Route::get('search-adverts', 'AdvertController@search_adverts')->name('search-adverts');
 
 /**
  * Orders
@@ -81,6 +86,7 @@ Route::get('all-orders', 'OrderController@all_orders')->name('all-orders');
 Route::get('delete-orders', 'OrderController@delete_orders')->name('delete-orders');
 Route::get('filter-adverts', 'OrderController@filterAdverts')->name('filter-adverts');
 Route::get('filter-agencies', 'OrderController@filterAgencies')->name('filter-agencies');
+Route::get('search-orders', 'OrderController@searchOrders')->name('searchOrders');
 
 
 /**
@@ -105,5 +111,8 @@ Route::get('filter-tc-orders', 'TransmissionCertificateController@filterOrders')
 /*
  * Invoice
  */
-
 Route::resource('invoice','InvoiceController');
+Route::get('filter-invoice-orders', 'InvoiceController@filterOrders')->name('filter-invoice-orders');
+Route::get('filter-invoice-orders-dec', 'InvoiceController@filterOrderDescription')->name('filter-invoice-orders-dec');
+Route::get('print-invoice/{id}', 'InvoiceController@printInvoice')->name('print-invoice');
+Route::get('all-invoice', 'InvoiceController@allInvoices')->name('all-invoice');

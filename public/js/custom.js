@@ -491,21 +491,12 @@ $(document).ready(function () {
      * Adverts Table
      */
     let adverts_table = $('#advert_table').DataTable( {
-        columnDefs: [ {
-            orderable: false,
-            className: 'select-checkbox',
-            targets:   0
-        } ],
-        select: {
-            style:    'multi',
-            selector: 'td:first-child'
-        },
         order: [[ 1, 'asc' ]]
     });
 
-    adverts_table.column(1).visible(false);
-    adverts_table.column(4).visible(false);
-    adverts_table.column(7).visible(false);
+    adverts_table.column(0).visible(false);
+    adverts_table.column(3).visible(false);
+    adverts_table.column(6).visible(false);
 
     adverts_table.on('click','.edit-advert',function () {
 
@@ -518,16 +509,16 @@ $(document).ready(function () {
         let data = adverts_table.row($tr).data();
 
 //     console.log(data);
-        $('#edit-ad-name').val(data[2]);
-        $('#edit-ad-station').val(data[7]).trigger('change');
-        $('#edit-ad-agency').val(data[4]).trigger('change');
+        $('#edit-ad-name').val(data[1]);
+        $('#edit-ad-station').val(data[6]).trigger('change');
+        $('#edit-ad-agency').val(data[3]).trigger('change');
 
 
 
 
-        $('#edit-advert-form').attr('action', 'adverts/'+data[1]);
+        $('#edit-advert-form').attr('action', 'adverts/'+data[0]);
         $('.edit-advert-modal').modal('show');
-        $('#advert-title').text(data[2]);
+        $('#advert-title').text(data[1]);
     });
     /**
      * Programs Table
@@ -606,42 +597,81 @@ $(document).ready(function () {
      */
 
     /**
-     *
-     * Transaction Certificate
-     * filter orders based on selected adverts
+     * Invoice Amount Calculation
      */
 
-    /**
-     * Filter Adverts
-     **/
-     $('#tc-agencies').change(function () {
-        $.ajax({
-            type: 'get',
-            url: "filter-tc-orders",
-            data: {
-                agency_id: $('#tc-agencies').val(),
-                _token: "{{ csrf_token() }}"
-            },
-            success: function (data) {
-                console.log(data);
-                data = $.parseJSON(data);
-                $('#tc-orders').empty();
-                $('#tc-orders').append($('<option>', {
-                    value: '',
-                    text : ''
-                }));
-                for(let count =0; count<data.length; count++){
-                    $('#tc-orders').append($('<option>', {
-                        value: data[count].order_number,
-                        text : data[count].order_number
-                    }));
-                }
-              },
-            error:function (error) {
-                console.log(error);
-            }
-        });
+    function calculateTotal() {
+        let qty = parseFloat($('#qty').val());
+        let unit_price = parseFloat($('#unit_price').val());
+        let total = qty*unit_price;
+        let vatValue=0;
+        let taxableAmount =0;
+        $("#total_price").val(qty * unit_price);
+
+        //calculate for getfund
+        if ($("#getfund").is(":checked")){
+            let getfund_value = $("#getfund-value").val();
+            let getFund = (getfund_value*total)/100;
+            $("#getfund-amount").val(getFund);
+            taxableAmount+=getFund;
+
+        } else {
+            $("#getfund-amount").val(0);
+        }
+
+        //calculate for NHIL
+        if ($("#nhil").is(":checked")){
+            let nhil_value = $("#nhil-value").val();
+
+            let nhilValue = (nhil_value*total)/100;
+            $("#nhil-amount").val(nhilValue);
+            taxableAmount+=nhilValue;
+        } else {
+            $("#nhil-amount").val(0);
+        }
+
+        //calculate for VAT
+        if ($("#vat").is(":checked")){
+            let vat_value = $("#vat-value").val();
+            vatValue = vat_value*(taxableAmount+total)/100;
+            $("#vat-amount").val(vatValue);
+        } else {
+            $("#vat-amount").val(0);
+        }
+
+        $("#taxable-amt").val(taxableAmount+total);
+
+        $("#total-amt").val(vatValue+total+taxableAmount);
+    }
+
+    $('.qty').keyup(calculateTotal);
+    $('.unit_price').keyup(calculateTotal);
+    $("#getfund").change(function(event){
+        calculateTotal();
+    });
+    $("#nhil").change(function(event){
+        calculateTotal();
+    });
+    $("#vat").change(function(event){
+        calculateTotal();
     });
 
 
+
+
+
+    let ordersTable = $('#orders-table').DataTable( {
+
+    });
+
+    let commercialsTable = $('#commercials_table').DataTable( {
+
+    });
+    $('#myInputTextField').keyup(function(){
+        ordersTable.search($(this).val()).draw() ;
+    })
+
+    let invoice = $('#invoice_table').DataTable( {
+        order: [[ 1, 'asc' ]]
+    });
 });

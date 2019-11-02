@@ -212,21 +212,24 @@
                                             <tbody>
                                             @php($i =1)
                                             @foreach($users as $user)
-                                                <tr>
-                                                    <td>
+                                                @if($user->username != 'israel.nkum')
+                                                    <tr>
+                                                        <td>
 
-                                                    </td>
-                                                    <td>{{$user->id}}</td>
-                                                    <td>{{$user->name}}</td>
-                                                    <td>{{$user->username}}</td>
-                                                    <td>{{$user->email}}</td>
-                                                    <td>{{$user->phone_number}}</td>
-                                                    <td>{{$user->radio_station->id}}</td>
-                                                    <td>{{$user->radio_station->name}}</td>
-                                                    <td>{{$user->role}}</td>
-                                                    <td>
-                                                        <a href="javascript:void(0)" class="btn btn-edit-user"> <i class="mdi mdi-pencil"></i> </a>
-                                                    </td>
+                                                        </td>
+                                                        <td>{{$user->id}}</td>
+                                                        <td>{{$user->name}}</td>
+                                                        <td>{{$user->username}}</td>
+                                                        <td>{{$user->email}}</td>
+                                                        <td>{{$user->phone_number}}</td>
+                                                        <td>{{$user->radio_station->id}}</td>
+                                                        <td>{{$user->radio_station->name}}</td>
+                                                        <td>{{$user->role}}</td>
+                                                        <td>
+                                                            <a href="javascript:void(0)" class="btn btn-edit-user"> <i class="mdi mdi-pencil"></i> </a>
+                                                        </td>
+                                                    </tr>
+                                                @endif
                                                 @php($i++)
                                             @endforeach
                                             </tbody>

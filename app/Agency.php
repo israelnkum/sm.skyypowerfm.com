@@ -18,6 +18,10 @@ class Agency extends Model
         return $this->hasMany('App\Order');
     }
 
+    public function invoice(){
+        return $this->hasMany('App\Invoice');
+    }
+
     protected $fillable = [
         'radio_station_id','agency_name','address','fax','email','phone_number','discount','contact_person','user_id'
     ];

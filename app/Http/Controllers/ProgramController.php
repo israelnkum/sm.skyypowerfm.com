@@ -41,8 +41,15 @@ class ProgramController extends Controller
 
     public function allPrograms(){
         $radio_stations = RadioStation::all();
-        $programs = Program::with('radio_station')->get()
-            ->groupBy('program_name','radio_station_id');
+        if (Auth::user()->role =="Admin"){
+            $programs = Program::with('radio_station')->get()
+                ->groupBy('program_name','radio_station_id');
+        }else{
+            $programs = Program::with('radio_station')
+                ->where('radio_station_id',Auth::user()->radio_station_id)
+                ->get()
+                ->groupBy('program_name','radio_station_id');
+        }
 
         return view('programs.programs',compact('radio_stations','programs'));
     }
@@ -123,6 +130,8 @@ class ProgramController extends Controller
     public function searchPrograms(Request $request){
         $programs = Program::with('radio_station')
             ->where('program_name', 'like', '%' . $request->input("search") . '%')
+            ->orWhere('day', 'like', '%' . $request->input("search") . '%')
+            ->where('radio_station_id',Auth::user()->radio_station_id)
             ->get()->groupBy('program_name','radio_station_id');
 
 //        return $programs
