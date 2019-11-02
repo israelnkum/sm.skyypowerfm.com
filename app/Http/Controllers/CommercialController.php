@@ -54,7 +54,7 @@ class CommercialController extends Controller
                 ->whereDate('end_date', '>=', Carbon::today()->startOfDay())
                 ->get();
 
-//            return  $orders;
+//            return  $programs;
             if (count($programs) == 0){
                 toastr()->error('No Programs Found');
                 return back();
@@ -175,6 +175,10 @@ class CommercialController extends Controller
      */
     public function destroy($id)
     {
-        //
+        $comm = Commercial::find($id);
+        $comm->delete();
+        toastr()->success('Commercial Deleted');
+
+        return back();
     }
 }

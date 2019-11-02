@@ -132,9 +132,10 @@
                                                                         <td >{{$comm->time}}</td>
 
                                                                         <td class="">
-                                                                            <form class="">
+                                                                            <form class="" method="post" action="{{route('commercials.destroy',$comm->id)}}" onsubmit="return confirm('Do you really want to delete?')">
                                                                                 @csrf
-                                                                                <button class="btn text-danger p-0">
+                                                                                {!! method_field('delete') !!}
+                                                                                <button type="submit" class="btn text-danger p-0">
                                                                                     <i title="Delete"  class="mdi mdi-delete"></i>
                                                                                 </button>
                                                                             </form>
